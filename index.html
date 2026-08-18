@@ -307,7 +307,7 @@ function Page1() {
 
   return (
     <div>
-      <SectionLabel eyebrow="Peta Sebaran · 630 Satdik" title="Sebaran Gugus Belajar & Data Sekolah" sub="Kab/Kota, gugus belajar, dan komposisi jenjang penerima BOSP Kinerja Terbaik 2026 di seluruh Nusa Tenggara Barat." />
+      <SectionLabel eyebrow={"Peta Sebaran · " + grandTotalSchools + " Satdik"} title="Sebaran Gugus Belajar & Data Sekolah" sub="Kab/Kota, gugus belajar, dan komposisi jenjang penerima BOSP Kinerja Terbaik 2026 di seluruh Nusa Tenggara Barat." />
 
       <div style={{display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap: 14, marginBottom: 28}}>
         {[
@@ -465,7 +465,7 @@ function Page2() {
 
   return (
     <div>
-      <SectionLabel eyebrow="20 Gelombang · Agustus–September 2026" title="Jadwal & Fasda per Gelombang" sub="Pilih kabupaten/kota dan jenjang untuk melihat gugus belajar yang terjadwal pada tiap gelombang, lengkap dengan anggota gugus dan fasilitator daerah (Fasda)." />
+      <SectionLabel eyebrow={gelombangGroups.length + " Gelombang · Agustus–September 2026"} title="Jadwal & Fasda per Gelombang" sub="Pilih kabupaten/kota dan jenjang untuk melihat gugus belajar yang terjadwal pada tiap gelombang, lengkap dengan anggota gugus dan fasilitator daerah (Fasda)." />
 
       <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:26}}>
         <div>
