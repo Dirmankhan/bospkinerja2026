@@ -10,8 +10,6 @@
  * Cara pasang: lihat README.md di root repo ini.
  */
 
-var JENJANG_LIST = ["PAUD", "PKBM", "SD", "SKB", "SLB", "SMA", "SMK", "SMP"];
-
 // Header (harus persis, tanpa memandang huruf besar/kecil & spasi berlebih) yang dipakai
 // untuk mengenali sheet sumber, supaya script tetap bekerja walau nama tab sheet diganti.
 var DATA_SHEET_HEADER_HINT = "Jenis BOSP";
@@ -50,83 +48,85 @@ function buildDashboardData_() {
   var dataSheet = findSheetByHeader_(ss, DATA_SHEET_HEADER_HINT);
   var gugusSheet = findSheetByHeader_(ss, GUGUS_SHEET_HEADER_HINT);
   if (!dataSheet) throw new Error('Tidak menemukan tab dengan kolom "' + DATA_SHEET_HEADER_HINT + '".');
-  if (!gugusSheet) throw new Error('Tidak menemukan tab dengan kolom "' + GUGUS_SHEET_HEADER_HINT + '".');
 
   var dataRows = readRows_(dataSheet);
-  var gugusRows = readRows_(gugusSheet);
+  var gugusRows = gugusSheet ? readRows_(gugusSheet) : [];
 
-  // Kelompokkan daftar sekolah per Gugus Belajar dari tab data mentah.
-  var schoolsByGugus = {};
+  // Jadwal Bimtek/Implementasi & Kewenangan per Gugus Belajar (dipakai sebagai lookup
+  // metadata saja). Sumber kebenaran untuk JUMLAH sekolah & gugus adalah tab data mentah
+  // (satu baris = satu sekolah), bukan kolom rekap di tab ini.
+  var scheduleByGugus = {};
+  gugusRows.forEach(function (r) {
+    var gName = textVal_(r["Nama Gugus Belajar"]);
+    if (gName) scheduleByGugus[gName] = r;
+  });
+
+  // Susun kab -> gugus -> daftar sekolah langsung dari tab data mentah, satu baris per sekolah.
+  var kab = {};
   dataRows.forEach(function (r) {
-    var g = textVal_(r["Gugus Belajar"]);
-    if (!g) return;
-    if (!schoolsByGugus[g]) schoolsByGugus[g] = [];
-    schoolsByGugus[g].push({
+    var kabKota = textVal_(r["Kab/Kota"]);
+    var gName = textVal_(r["Gugus Belajar"]);
+    var jenjang = textVal_(r["Jenjang"]);
+    if (!kabKota || !gName) return;
+
+    if (!kab[kabKota]) kab[kabKota] = {};
+    if (!kab[kabKota][gName]) {
+      var sched = scheduleByGugus[gName] || {};
+      var kewenangan = textVal_(sched["Kewenangan"]);
+      var gelBimtek = textVal_(sched["Gelombang Bimtek"]) || null;
+      var gelImpl = textVal_(sched["Gelombang Implementasi"]) || null;
+      kab[kabKota][gName] = {
+        g: gName,
+        c: {},
+        t: 0,
+        j: kewenangan === "Provinsi" ? "Dikmen" : "Dasmen",
+        gel: gelBimtek,
+        schools: [],
+        tl: {
+          gel: gelBimtek,
+          bimtek_spmi_tgl: textVal_(sched["Tanggal Keg. Bimtek SPMI"]) || null,
+          bimtek_spmi_peny: textVal_(sched["Penyelenggara Bimtek SPMI"]) || null,
+          bimtek_spmi_fasda: textVal_(sched["Fasda Bimtek SPMI"]) || null,
+          bimtek_lit_tgl: textVal_(sched["Tanggal Keg. Bimtek Litnum"]) || null,
+          bimtek_lit_peny: textVal_(sched["Penyelenggara Bimtek Litnum"]) || null,
+          bimtek_lit_fasda: textVal_(sched["Fasda Bimtek Litnum"]) || null,
+          bimtek_dig_tgl: textVal_(sched["Tanggal Keg. Bimtek Digitalisasi"]) || null,
+          bimtek_dig_peny: textVal_(sched["Penyelenggara Bimtek Digitalisasi"]) || null,
+          bimtek_dig_fasda: textVal_(sched["Fasda Bimtek Digitalisasi"]) || null,
+          gel_impl: gelImpl,
+          impl_spmi_tgl: textVal_(sched["Tanggal Keg. Implementasi SPMI"]) || null,
+          impl_spmi_peny: textVal_(sched["Penyelenggara Implementasi SPMI"]) || null,
+          impl_spmi_fasda: textVal_(sched["Fasda Implementasi SPMI"]) || null,
+          impl_lit_tgl: textVal_(sched["Tanggal Keg. Implementasi Litnum"]) || null,
+          impl_lit_peny: textVal_(sched["Penyelenggara Implementasi Litnum"]) || null,
+          impl_lit_fasda: textVal_(sched["Fasda Implementasi Litnum"]) || null,
+          impl_dig_tgl: textVal_(sched["Tanggal Keg. Implementasi Digitalisasi"]) || null,
+          impl_dig_peny: textVal_(sched["Penyelenggara Implementasi Digitalisasi"]) || null,
+          impl_dig_fasda: textVal_(sched["Fasda Implementasi Digitalisasi"]) || null,
+        },
+      };
+    }
+
+    var record = kab[kabKota][gName];
+    record.schools.push({
       npsn: textVal_(r["NPSN"]),
       nama: textVal_(r["Nama Sekolah"]),
       kec: textVal_(r["kecamatan"]) || textVal_(r["Kecamatan"]),
       pid: Number(r["Penerima PID"]) === 1,
-      jenjang: textVal_(r["Jenjang"]),
+      jenjang: jenjang,
       status: textVal_(r["Status"]),
     });
+    record.t += 1;
+    if (jenjang) record.c[jenjang] = (record.c[jenjang] || 0) + 1;
   });
 
-  // Susun satu record per Gugus Belajar dari tab rekap/jadwal.
-  var kab = {};
-  gugusRows.forEach(function (r) {
-    var kabKota = textVal_(r["Kab/Kota"]);
-    var gName = textVal_(r["Nama Gugus Belajar"]);
-    if (!kabKota || !gName) return;
-
-    var counts = {};
-    var total = 0;
-    JENJANG_LIST.forEach(function (j) {
-      var n = Number(r[j]) || 0;
-      if (n > 0) { counts[j] = n; total += n; }
-    });
-    if (total === 0) total = Number(r["Jumlah"]) || 0;
-
-    var kewenangan = textVal_(r["Kewenangan"]);
-    var jenis = kewenangan === "Provinsi" ? "Dikmen" : "Dasmen";
-    var gelBimtek = textVal_(r["Gelombang Bimtek"]) || null;
-    var gelImpl = textVal_(r["Gelombang Implementasi"]) || null;
-
-    var record = {
-      g: gName,
-      c: counts,
-      t: total,
-      j: jenis,
-      gel: gelBimtek,
-      schools: schoolsByGugus[gName] || [],
-      tl: {
-        gel: gelBimtek,
-        bimtek_spmi_tgl: textVal_(r["Tanggal Keg. Bimtek SPMI"]) || null,
-        bimtek_spmi_peny: textVal_(r["Penyelenggara Bimtek SPMI"]) || null,
-        bimtek_spmi_fasda: textVal_(r["Fasda Bimtek SPMI"]) || null,
-        bimtek_lit_tgl: textVal_(r["Tanggal Keg. Bimtek Litnum"]) || null,
-        bimtek_lit_peny: textVal_(r["Penyelenggara Bimtek Litnum"]) || null,
-        bimtek_lit_fasda: textVal_(r["Fasda Bimtek Litnum"]) || null,
-        bimtek_dig_tgl: textVal_(r["Tanggal Keg. Bimtek Digitalisasi"]) || null,
-        bimtek_dig_peny: textVal_(r["Penyelenggara Bimtek Digitalisasi"]) || null,
-        bimtek_dig_fasda: textVal_(r["Fasda Bimtek Digitalisasi"]) || null,
-        gel_impl: gelImpl,
-        impl_spmi_tgl: textVal_(r["Tanggal Keg. Implementasi SPMI"]) || null,
-        impl_spmi_peny: textVal_(r["Penyelenggara Implementasi SPMI"]) || null,
-        impl_spmi_fasda: textVal_(r["Fasda Implementasi SPMI"]) || null,
-        impl_lit_tgl: textVal_(r["Tanggal Keg. Implementasi Litnum"]) || null,
-        impl_lit_peny: textVal_(r["Penyelenggara Implementasi Litnum"]) || null,
-        impl_lit_fasda: textVal_(r["Fasda Implementasi Litnum"]) || null,
-        impl_dig_tgl: textVal_(r["Tanggal Keg. Implementasi Digitalisasi"]) || null,
-        impl_dig_peny: textVal_(r["Penyelenggara Implementasi Digitalisasi"]) || null,
-        impl_dig_fasda: textVal_(r["Fasda Implementasi Digitalisasi"]) || null,
-      },
-    };
-
-    if (!kab[kabKota]) kab[kabKota] = [];
-    kab[kabKota].push(record);
+  // Ratakan kab -> {gName: record} menjadi kab -> [record, ...] sesuai bentuk yang dipakai index.html.
+  var kabOut = {};
+  Object.keys(kab).forEach(function (k) {
+    kabOut[k] = Object.keys(kab[k]).map(function (g) { return kab[k][g]; });
   });
 
-  return { kab: kab, generatedAt: new Date().toISOString() };
+  return { kab: kabOut, generatedAt: new Date().toISOString() };
 }
 
 function appendRtlSubmission_(body) {

@@ -47,12 +47,16 @@ URL Web App yang sama menggunakan versi kode terbaru.
 Script mengenali tab berdasarkan judul kolom (bukan nama tab), jadi tab boleh diberi nama apa
 saja asalkan judul kolomnya sama persis:
 
-- **Tab data mentah per sekolah** — harus memuat kolom `Jenis BOSP`, `Kab/Kota`, `NPSN`,
-  `Jenjang`, `Status`, `Nama Sekolah`, `Penerima PID`, `kecamatan`, `Gugus Belajar`.
-- **Tab rekap per Gugus Belajar** — harus memuat kolom `Nama Gugus Belajar`, `Kab/Kota`,
-  `Kewenangan`, kolom jumlah per jenjang (`PAUD`, `PKBM`, `SD`, `SKB`, `SLB`, `SMA`, `SMK`,
-  `SMP`), `Jumlah`, `Gelombang Bimtek`, `Gelombang Implementasi`, serta kolom
-  Tanggal/Penyelenggara/Fasda untuk Bimtek dan Implementasi (SPMI, Litnum, Digitalisasi).
+- **Tab data mentah per sekolah** (sumber kebenaran) — satu baris = satu sekolah. Harus memuat
+  kolom `Jenis BOSP`, `Kab/Kota`, `NPSN`, `Jenjang`, `Status`, `Nama Sekolah`, `Penerima PID`,
+  `kecamatan`, `Gugus Belajar`. **Jumlah sekolah, jumlah gugus, dan komposisi per jenjang di
+  dasbor dihitung langsung dari baris-baris tab ini**, bukan dari kolom rekap manapun — supaya
+  selalu sesuai dengan data sekolah yang sebenarnya.
+- **Tab rekap per Gugus Belajar** (opsional, untuk metadata jadwal saja) — harus memuat kolom
+  `Nama Gugus Belajar`, `Kewenangan`, `Gelombang Bimtek`, `Gelombang Implementasi`, serta kolom
+  Tanggal/Penyelenggara/Fasda untuk Bimtek dan Implementasi (SPMI, Litnum, Digitalisasi). Tab
+  ini hanya dipakai untuk melengkapi info jadwal & fasilitator per gugus (dicocokkan lewat nama
+  gugus) — kolom jumlah/jenjang di tab ini **tidak** dipakai untuk menghitung apa pun di dasbor.
 
 Kedua tab ini sudah tersedia di Google Sheet sumber yang ditautkan di atas.
 
