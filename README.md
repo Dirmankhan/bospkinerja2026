@@ -54,7 +54,7 @@ saja asalkan judul kolomnya sama persis:
   selalu sesuai dengan data sekolah yang sebenarnya.
 - **Tab rekap per Gugus Belajar** (opsional, untuk metadata jadwal saja) — harus memuat kolom
   `Nama Gugus Belajar`, `Kewenangan`, `Gelombang Bimtek`, `Gelombang Implementasi`, serta kolom
-  Tanggal/Penyelenggara/Fasda untuk Bimtek dan Implementasi (SPMI, Litnum, Digitalisasi). Tab
+  Tanggal/Penyelenggara/Fasda untuk Bimtek dan Implementasi (Tata Kelola, Litnum, Digitalisasi). Tab
   ini hanya dipakai untuk melengkapi info jadwal & fasilitator per gugus (dicocokkan lewat nama
   gugus) — kolom jumlah/jenjang di tab ini **tidak** dipakai untuk menghitung apa pun di dasbor.
 

@@ -296,7 +296,7 @@ function Page1() {
   }, [allSchools, activeKab, activeJenjangs, activeGelombangs, query]);
 
   const exportExcel = () => {
-    const headers = ["NPSN","Nama Sekolah","Gugus Belajar","Gelombang","Jadwal Bimtek SPMI","Jadwal Bimtek Litnum","Jadwal Bimtek Digitalisasi","Kecamatan","Penerima PID"];
+    const headers = ["NPSN","Nama Sekolah","Gugus Belajar","Gelombang","Jadwal Bimtek Tata Kelola","Jadwal Bimtek Litnum","Jadwal Bimtek Digitalisasi","Kecamatan","Penerima PID"];
     const rows = filteredSchools.map(s => [s.npsn, s.nama, s.gugus, s.gel||"", s.spmiTgl||"", s.litTgl||"", s.digTgl||"", s.kec, s.pid?"Ya":"Tidak"]);
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     ws["!cols"] = [ {wch:12},{wch:36},{wch:26},{wch:12},{wch:16},{wch:16},{wch:20},{wch:20},{wch:14} ];
@@ -379,7 +379,7 @@ function Page1() {
                 <th style={th}>Nama Sekolah</th>
                 <th style={th}>Gugus Belajar</th>
                 <th style={th}>Gelombang</th>
-                <th style={th}>Jadwal Bimtek SPMI</th>
+                <th style={th}>Jadwal Bimtek Tata Kelola</th>
                 <th style={th}>Jadwal Bimtek Litnum</th>
                 <th style={th}>Jadwal Bimtek Digitalisasi</th>
                 <th style={th}>Kecamatan</th>
@@ -499,9 +499,9 @@ function Page2() {
               <Chip tone="gold">{totalKabGel} Kabupaten/Kota</Chip>
             </div>
             <div style={{fontSize:11.5, color:"#8a7f6e", lineHeight:1.7, marginBottom:12}}>
-              <span style={{fontWeight:700, color:"#6b6154"}}>Bimtek</span> — SPMI: {naDate(sample.bimtek_spmi_tgl)} · Litnum: {naDate(sample.bimtek_lit_tgl)} · Digitalisasi: {naDate(sample.bimtek_dig_tgl)}
+              <span style={{fontWeight:700, color:"#6b6154"}}>Bimtek</span> — Tata Kelola: {naDate(sample.bimtek_spmi_tgl)} · Litnum: {naDate(sample.bimtek_lit_tgl)} · Digitalisasi: {naDate(sample.bimtek_dig_tgl)}
               &nbsp;&nbsp;|&nbsp;&nbsp;
-              <span style={{fontWeight:700, color:"#6b6154"}}>Implementasi</span> — SPMI: {naDate(sample.impl_spmi_tgl)} · Litnum: {naDate(sample.impl_lit_tgl)} · Digitalisasi: {naDate(sample.impl_dig_tgl)}
+              <span style={{fontWeight:700, color:"#6b6154"}}>Implementasi</span> — Tata Kelola: {naDate(sample.impl_spmi_tgl)} · Litnum: {naDate(sample.impl_lit_tgl)} · Digitalisasi: {naDate(sample.impl_dig_tgl)}
             </div>
 
             <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"hidden"}}>
@@ -519,10 +519,10 @@ function Page2() {
                     const isOpen = expanded.has(key);
                     const tl = g.tl || {};
                     const bimtekRows = [
-                      { label: "Bimtek SPMI", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust" },
+                      { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust" },
                       { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal" },
                       { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold" },
-                      { label: "Implementasi SPMI", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
+                      { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
                       { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal" },
                       { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold" },
                     ];
