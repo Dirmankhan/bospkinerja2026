@@ -10,7 +10,8 @@ Google Apps Script Web App (`apps-script/Code.gs`).
 
 ## Struktur repo
 
-- `index.html` — dasbor (Sebaran Gugus Belajar & Data Sekolah, Jadwal & Fasda, Export Excel).
+- `index.html` — dasbor (Sebaran Gugus Belajar & Data Sekolah, Jadwal & Fasda, Daftar Fasda
+  dengan pencarian nama, Export Excel).
 - `apps-script/Code.gs` — backend yang dipasang (bound) ke Google Sheet, menyediakan:
   - `doGet` — membaca sheet dan mengembalikan JSON data dasbor.
   - `doPost` — menerima unggahan link RTL dari halaman "Pelaksanaan & Tugas" dan menyimpannya

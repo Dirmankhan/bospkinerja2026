@@ -612,7 +612,85 @@ function Page2() {
   );
 }
 
-/* ---------------- PAGE 3: PELAKSANAAN & UPLOAD TUGAS ---------------- */
+/* ---------------- PAGE 3: DAFTAR FASDA ---------------- */
+function Page4() {
+  const kabList = Object.keys(DATA.kab).sort();
+  const [query, setQuery] = useState("");
+
+  const naVal = (v) => v || <span style={{color:"#a89e8c"}}>—</span>;
+
+  const rows = useMemo(() => {
+    const out = [];
+    kabList.forEach(k => (DATA.kab[k]||[]).forEach(g => {
+      const tl = g.tl || {};
+      const items = [
+        { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust" },
+        { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal" },
+        { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold" },
+        { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
+        { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal" },
+        { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold" },
+      ];
+      items.forEach(it => out.push({ kab: k, gugus: g.g, ...it }));
+    }));
+    return out;
+  }, [kabList]);
+
+  const filteredRows = useMemo(() => {
+    if (!query.trim()) return rows;
+    const q = query.trim().toLowerCase();
+    return rows.filter(r => (r.fasda || "").toLowerCase().includes(q));
+  }, [rows, query]);
+
+  return (
+    <div>
+      <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
+
+      <div style={{marginBottom:20, maxWidth:360}}>
+        <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Cari Nama Fasda</div>
+        <div style={{position:"relative"}}>
+          <Search size={14} style={{position:"absolute", left:10, top:11, color:"#9b8f7c"}} />
+          <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Masukkan nama fasda..."
+            style={{...selectStyle, padding:"9px 12px 9px 30px"}} />
+        </div>
+      </div>
+
+      <div style={{fontSize:12, color:"#8a7f6e", marginBottom:10}}>{filteredRows.length} penugasan ditemukan</div>
+
+      <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"hidden"}}>
+        <div style={{maxHeight: 560, overflowY:"auto"}}>
+          <table style={{width:"100%", borderCollapse:"collapse", fontSize: 13}}>
+            <thead>
+              <tr style={{position:"sticky", top:0, background: PAPER2, zIndex:1}}>
+                <th style={th}>Nama Fasda</th>
+                <th style={th}>Nama Bimtek</th>
+                <th style={th}>Penyelenggara</th>
+                <th style={th}>Tanggal Pelaksanaan</th>
+                <th style={th}>Nama Gugus</th>
+                <th style={th}>Kabupaten/Kota</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRows.map((r, i) => (
+                <tr key={i} style={{background: i%2? "#fbf8f1":"#fff"}}>
+                  <td style={{...td, fontWeight:600}}>{naVal(r.fasda)}</td>
+                  <td style={td}><Chip tone={r.tone}>{r.label}</Chip></td>
+                  <td style={td}>{naVal(r.peny)}</td>
+                  <td style={td}>{naVal(r.tgl)}</td>
+                  <td style={td}>{r.gugus}</td>
+                  <td style={td}>{r.kab.replace("Kabupaten ","Kab. ")}</td>
+                </tr>
+              ))}
+              {filteredRows.length===0 && <tr><td colSpan={6} style={{padding:24, textAlign:"center", color:"#a89e8c"}}>Tidak ada fasda yang cocok dengan pencarian.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- PAGE 4 (disembunyikan): PELAKSANAAN & UPLOAD TUGAS ---------------- */
 function SchoolUploadForm({kab, gugus, sekolah}) {
   const storageKey = "tugas:" + kab + ":" + gugus.g + ":" + sekolah.npsn;
   const [rtlLink, setRtlLink] = useState("");
@@ -807,9 +885,10 @@ function App() {
   const pages = [
     { id:1, label:"Sebaran Gugus", icon: LayoutGrid },
     { id:2, label:"Jadwal & Fasda", icon: Calendar },
-    // Halaman 3 "Pelaksanaan & Tugas" disembunyikan sementara — komponen Page3 tetap ada di kode,
-    // tinggal tambahkan lagi baris { id:3, label:"Pelaksanaan & Tugas", icon: ListChecks } di sini
-    // dan {page===3 && <Page3 />} di bagian render untuk mengaktifkannya kembali.
+    { id:3, label:"Daftar Fasda", icon: Users },
+    // Halaman "Pelaksanaan & Tugas" disembunyikan sementara — komponen Page3 tetap ada di kode,
+    // tinggal tambahkan lagi baris { id:4, label:"Pelaksanaan & Tugas", icon: ListChecks } di sini
+    // dan {page===4 && <Page3 />} di bagian render untuk mengaktifkannya kembali.
   ];
 
   return (
@@ -870,7 +949,8 @@ function App() {
           <Fragment>
             {page===1 && <Page1 />}
             {page===2 && <Page2 />}
-            {/* {page===3 && <Page3 />} */}
+            {page===3 && <Page4 />}
+            {/* {page===4 && <Page3 />} */}
           </Fragment>
         )}
       </div>
