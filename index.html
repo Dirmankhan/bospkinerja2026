@@ -709,16 +709,16 @@ function Page4() {
 
       <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:20, maxWidth:600}}>
         <div>
+          <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Gelombang</div>
+          <MultiSelect options={gelombangOptions} selected={activeGelombangs} onChange={setActiveGelombangs} placeholder="Semua Gelombang" />
+        </div>
+        <div>
           <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Cari Nama Fasda</div>
           <div style={{position:"relative"}}>
             <Search size={14} style={{position:"absolute", left:10, top:11, color:"#9b8f7c"}} />
             <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Masukkan nama fasda..."
               style={{...selectStyle, padding:"9px 12px 9px 30px"}} />
           </div>
-        </div>
-        <div>
-          <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Gelombang</div>
-          <MultiSelect options={gelombangOptions} selected={activeGelombangs} onChange={setActiveGelombangs} placeholder="Semua Gelombang" />
         </div>
       </div>
 
