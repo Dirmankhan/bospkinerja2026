@@ -642,6 +642,16 @@ function Page4() {
     return rows.filter(r => (r.fasda || "").toLowerCase().includes(q));
   }, [rows, query]);
 
+  const exportExcel = () => {
+    const headers = ["Nama Fasda","Nama Bimtek","Penyelenggara","Tanggal Pelaksanaan","Nama Gugus","Kabupaten/Kota"];
+    const dataRows = filteredRows.map(r => [r.fasda||"", r.label, r.peny||"", r.tgl||"", r.gugus, r.kab.replace("Kabupaten ","Kab. ")]);
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+    ws["!cols"] = [ {wch:32},{wch:26},{wch:26},{wch:18},{wch:26},{wch:20} ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Daftar Fasda");
+    XLSX.writeFile(wb, "daftar_fasda_bosp_" + new Date().toISOString().slice(0,10) + ".xlsx");
+  };
+
   return (
     <div>
       <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
@@ -655,7 +665,13 @@ function Page4() {
         </div>
       </div>
 
-      <div style={{fontSize:12, color:"#8a7f6e", marginBottom:10}}>{filteredRows.length} penugasan ditemukan</div>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
+        <div style={{fontSize:12, color:"#8a7f6e"}}>{filteredRows.length} penugasan ditemukan</div>
+        <button onClick={exportExcel}
+          style={{display:"inline-flex", alignItems:"center", gap:6, background:"#fff", border:"1px solid " + LINE, borderRadius:8, padding:"7px 12px", fontSize:12, fontWeight:600, color: INK, cursor:"pointer"}}>
+          <Upload size={13} style={{transform:"rotate(180deg)"}} /> Export Tabel (Excel)
+        </button>
+      </div>
 
       <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"hidden"}}>
         <div style={{maxHeight: 560, overflowY:"auto"}}>
