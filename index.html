@@ -638,6 +638,7 @@ function Page4() {
 
   const kabList = Object.keys(DATA.kab).sort();
   const [query, setQuery] = useState("");
+  const [activeGelombangs, setActiveGelombangs] = useState([]);
 
   const naVal = (v) => v || <span style={{color:"#a89e8c"}}>—</span>;
 
@@ -646,29 +647,42 @@ function Page4() {
     kabList.forEach(k => (DATA.kab[k]||[]).forEach(g => {
       const tl = g.tl || {};
       const items = [
-        { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust" },
-        { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal" },
-        { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold" },
-        { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
-        { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal" },
-        { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold" },
+        { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust", gel: tl.gel },
+        { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal", gel: tl.gel },
+        { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold", gel: tl.gel },
+        { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust", gel: tl.gel_impl },
+        { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal", gel: tl.gel_impl },
+        { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold", gel: tl.gel_impl },
       ];
       items.forEach(it => out.push({ kab: k, gugus: g.g, ...it }));
     }));
     return out;
   }, [kabList]);
 
+  const gelombangOptions = useMemo(() => {
+    const set = new Set(rows.map(r=>r.gel).filter(Boolean));
+    return Array.from(set).sort((a,b) => {
+      const na = parseInt((a.match(/\d+/)||[0])[0], 10);
+      const nb = parseInt((b.match(/\d+/)||[0])[0], 10);
+      return na - nb;
+    });
+  }, [rows]);
+
   const filteredRows = useMemo(() => {
-    if (!query.trim()) return rows;
-    const q = query.trim().toLowerCase();
-    return rows.filter(r => (r.fasda || "").toLowerCase().includes(q));
-  }, [rows, query]);
+    let list = rows;
+    if (activeGelombangs.length > 0) list = list.filter(r => activeGelombangs.includes(r.gel));
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      list = list.filter(r => (r.fasda || "").toLowerCase().includes(q));
+    }
+    return list;
+  }, [rows, query, activeGelombangs]);
 
   const exportExcel = () => {
-    const headers = ["Nama Fasda","Nama Bimtek","Penyelenggara","Tanggal Pelaksanaan","Nama Gugus","Kabupaten/Kota"];
-    const dataRows = filteredRows.map(r => [r.fasda||"", r.label, r.peny||"", r.tgl||"", r.gugus, r.kab.replace("Kabupaten ","Kab. ")]);
+    const headers = ["Nama Fasda","Nama Bimtek","Gelombang","Penyelenggara","Tanggal Pelaksanaan","Nama Gugus","Kabupaten/Kota"];
+    const dataRows = filteredRows.map(r => [r.fasda||"", r.label, r.gel||"", r.peny||"", r.tgl||"", r.gugus, r.kab.replace("Kabupaten ","Kab. ")]);
     const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
-    ws["!cols"] = [ {wch:32},{wch:26},{wch:26},{wch:18},{wch:26},{wch:20} ];
+    ws["!cols"] = [ {wch:32},{wch:26},{wch:14},{wch:26},{wch:18},{wch:26},{wch:20} ];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Daftar Fasda");
     XLSX.writeFile(wb, "daftar_fasda_bosp_" + new Date().toISOString().slice(0,10) + ".xlsx");
@@ -693,12 +707,18 @@ function Page4() {
     <div>
       <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
 
-      <div style={{marginBottom:20, maxWidth:360}}>
-        <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Cari Nama Fasda</div>
-        <div style={{position:"relative"}}>
-          <Search size={14} style={{position:"absolute", left:10, top:11, color:"#9b8f7c"}} />
-          <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Masukkan nama fasda..."
-            style={{...selectStyle, padding:"9px 12px 9px 30px"}} />
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:20, maxWidth:600}}>
+        <div>
+          <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Cari Nama Fasda</div>
+          <div style={{position:"relative"}}>
+            <Search size={14} style={{position:"absolute", left:10, top:11, color:"#9b8f7c"}} />
+            <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Masukkan nama fasda..."
+              style={{...selectStyle, padding:"9px 12px 9px 30px"}} />
+          </div>
+        </div>
+        <div>
+          <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Gelombang</div>
+          <MultiSelect options={gelombangOptions} selected={activeGelombangs} onChange={setActiveGelombangs} placeholder="Semua Gelombang" />
         </div>
       </div>
 
