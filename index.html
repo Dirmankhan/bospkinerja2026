@@ -75,6 +75,7 @@ const JENJANG_COLORS = {
   SLB: "#7a5c8e", SMA: "#3d6b8a", SMK: "#a8542f", SMP: "#4a7c6f"
 };
 const JENJANG_ORDER = ["PAUD","PKBM","SD","SKB","SLB","SMA","SMK","SMP"];
+const INDO_MONTHS = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
 const INK = "#2a2420";
 const PAPER = "#f6f1e7";
@@ -639,6 +640,7 @@ function Page4() {
   const kabList = Object.keys(DATA.kab).sort();
   const [query, setQuery] = useState("");
   const [activeGelombangs, setActiveGelombangs] = useState([]);
+  const [activeTanggals, setActiveTanggals] = useState([]);
 
   const naVal = (v) => v || <span style={{color:"#a89e8c"}}>—</span>;
 
@@ -668,15 +670,28 @@ function Page4() {
     });
   }, [rows]);
 
+  const tanggalOptions = useMemo(() => {
+    const set = new Set(rows.map(r=>r.tgl).filter(Boolean));
+    const parse = (s) => {
+      const m = s.match(/^(\d+)\s+(\w+)/);
+      return m ? { day: parseInt(m[1], 10), month: INDO_MONTHS.indexOf(m[2]) } : { day: 0, month: -1 };
+    };
+    return Array.from(set).sort((a,b) => {
+      const pa = parse(a), pb = parse(b);
+      return pa.month - pb.month || pa.day - pb.day;
+    });
+  }, [rows]);
+
   const filteredRows = useMemo(() => {
     let list = rows;
     if (activeGelombangs.length > 0) list = list.filter(r => activeGelombangs.includes(r.gel));
+    if (activeTanggals.length > 0) list = list.filter(r => activeTanggals.includes(r.tgl));
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       list = list.filter(r => (r.fasda || "").toLowerCase().includes(q));
     }
     return list;
-  }, [rows, query, activeGelombangs]);
+  }, [rows, query, activeGelombangs, activeTanggals]);
 
   const exportExcel = () => {
     const headers = ["Nama Fasda","Nama Bimtek","Gelombang","Penyelenggara","Tanggal Pelaksanaan","Nama Gugus","Kabupaten/Kota"];
@@ -707,10 +722,14 @@ function Page4() {
     <div>
       <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
 
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:20, maxWidth:600}}>
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:14, marginBottom:20, maxWidth:900}}>
         <div>
           <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Gelombang</div>
           <MultiSelect options={gelombangOptions} selected={activeGelombangs} onChange={setActiveGelombangs} placeholder="Semua Gelombang" />
+        </div>
+        <div>
+          <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Tanggal</div>
+          <MultiSelect options={tanggalOptions} selected={activeTanggals} onChange={setActiveTanggals} placeholder="Semua Tanggal" />
         </div>
         <div>
           <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Cari Nama Fasda</div>
