@@ -64,6 +64,12 @@ let DATA = {};
 // Tempel URL Web App Google Apps Script (hasil deploy) di sini agar data RTL otomatis
 // tersalin ke tab "hasilrtl" pada Google Sheet sumber. Kosongkan jika belum di-deploy.
 
+// Password gerbang untuk tab "Daftar Fasda" saja (halaman lain tetap terbuka tanpa password).
+// PENTING: ini bukan keamanan sungguhan — password ini tersimpan sebagai teks biasa di file
+// HTML ini dan bisa dilihat siapa pun lewat "View Page Source"/DevTools browser. Cukup untuk
+// mencegah pengunjung random membuka tab ini secara tidak sengaja. Ganti sebelum deploy.
+const FASDA_PAGE_PASSWORD = "GANTI_PASSWORD_INI";
+
 const JENJANG_COLORS = {
   PAUD: "#c76b3f", PKBM: "#8a9a5b", SD: "#2f5d62", SKB: "#c9a24a",
   SLB: "#7a5c8e", SMA: "#3d6b8a", SMK: "#a8542f", SMP: "#4a7c6f"
@@ -614,6 +620,22 @@ function Page2() {
 
 /* ---------------- PAGE 3: DAFTAR FASDA ---------------- */
 function Page4() {
+  const [unlocked, setUnlocked] = useState(() => {
+    try { return sessionStorage.getItem("fasdaUnlocked") === "1"; } catch (e) { return false; }
+  });
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const tryUnlock = () => {
+    if (passwordInput === FASDA_PAGE_PASSWORD) {
+      try { sessionStorage.setItem("fasdaUnlocked", "1"); } catch (e) { /* private browsing dsb. */ }
+      setUnlocked(true);
+      setPasswordError("");
+    } else {
+      setPasswordError("Password salah. Coba lagi.");
+    }
+  };
+
   const kabList = Object.keys(DATA.kab).sort();
   const [query, setQuery] = useState("");
 
@@ -651,6 +673,21 @@ function Page4() {
     XLSX.utils.book_append_sheet(wb, ws, "Daftar Fasda");
     XLSX.writeFile(wb, "daftar_fasda_bosp_" + new Date().toISOString().slice(0,10) + ".xlsx");
   };
+
+  if (!unlocked) {
+    return (
+      <div style={{maxWidth:340, margin:"70px auto", textAlign:"center"}}>
+        <div style={{fontFamily:"'Fraunces', serif", fontSize:20, fontWeight:600, color: INK, marginBottom:8}}>Halaman Terkunci</div>
+        <p style={{color:"#6b6154", fontSize:13, marginBottom:18, lineHeight:1.6}}>Masukkan password untuk melihat Daftar Fasda.</p>
+        <input type="password" value={passwordInput} autoFocus
+          onChange={e=>{ setPasswordInput(e.target.value); setPasswordError(""); }}
+          onKeyDown={e=>{ if (e.key === "Enter") tryUnlock(); }}
+          placeholder="Password" style={{...inputStyle, textAlign:"center", marginBottom:10}} />
+        <button onClick={tryUnlock} style={{...btnPrimary, width:"100%"}}>Buka Halaman</button>
+        {passwordError && <div style={{color: RUST, fontSize:12, marginTop:10}}>{passwordError}</div>}
+      </div>
+    );
+  }
 
   return (
     <div>

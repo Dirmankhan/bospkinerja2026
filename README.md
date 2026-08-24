@@ -34,7 +34,12 @@ Google Apps Script Web App (`apps-script/Code.gs`).
    const APPS_SCRIPT_URL = "";
    ```
    dan tempel URL dari langkah 4 di antara tanda kutip.
-6. Simpan lalu buka `index.html` di browser (bisa langsung dibuka dari file lokal, atau
+6. Di file yang sama, cari baris berikut dan ganti dengan password pilihanmu untuk mengunci
+   tab **"Daftar Fasda"** (lihat catatan keamanan di bawah):
+   ```js
+   const FASDA_PAGE_PASSWORD = "GANTI_PASSWORD_INI";
+   ```
+7. Simpan lalu buka `index.html` di browser (bisa langsung dibuka dari file lokal, atau
    di-hosting misalnya lewat GitHub Pages). Data akan otomatis dimuat saat halaman dibuka, dan
    bisa disegarkan lagi lewat tombol **⟳ Segarkan**.
 
@@ -73,3 +78,16 @@ Kedua tab ini sudah tersedia di Google Sheet sumber yang ditautkan di atas.
   lebih ringan. Halaman butuh koneksi internet saat dibuka.
 - Seluruh logika, tampilan, filter, grafik, dan halaman ("Sebaran Gugus", "Jadwal & Fasda")
   sama persis dengan dasbor asli.
+- Ditambahkan halaman ketiga **"Daftar Fasda"**: daftar seluruh penugasan Fasda (Bimtek &
+  Implementasi × Tata Kelola/Litnum/Digitalisasi) dengan pencarian berdasarkan nama fasda dan
+  export Excel.
+
+## Catatan keamanan: password "Daftar Fasda"
+
+Tab "Daftar Fasda" dikunci password (`FASDA_PAGE_PASSWORD`), tapi ini **bukan keamanan
+sungguhan** — ini hanya gerbang sisi-browser untuk mencegah pengunjung random tidak sengaja
+membuka tab tersebut. Karena `index.html` adalah file statis tanpa server, password ini
+tersimpan sebagai teks biasa di dalam kode dan siapa pun yang membuka "View Page
+Source"/DevTools browser tetap bisa melihat isi tabelnya tanpa perlu memasukkan password.
+Jangan andalkan ini untuk melindungi data yang benar-benar sensitif — kalau butuh proteksi
+sungguhan, perlu autentikasi di sisi server (di luar cakupan dasbor statis ini).
