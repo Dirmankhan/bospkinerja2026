@@ -13,7 +13,9 @@ Google Apps Script Web App (`apps-script/Code.gs`).
 - `index.html` — dasbor (Sebaran Gugus Belajar & Data Sekolah, Jadwal & Fasda, Daftar Fasda
   dengan pencarian nama, Export Excel).
 - `apps-script/Code.gs` — backend yang dipasang (bound) ke Google Sheet, menyediakan:
-  - `doGet` — membaca sheet dan mengembalikan JSON data dasbor.
+  - `doGet` — membaca sheet dan mengembalikan JSON data dasbor, termasuk `sheetUpdatedAt`
+    (waktu terakhir Google Sheet sumber diubah, dari metadata Google Drive) yang ditampilkan
+    dasbor sebagai "Update terakhir" di bawah tombol Segarkan.
   - `doPost` — menerima unggahan link RTL dari halaman "Pelaksanaan & Tugas" dan menyimpannya
     ke tab `hasilrtl` (dibuat otomatis).
 

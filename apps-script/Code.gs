@@ -126,7 +126,17 @@ function buildDashboardData_() {
     kabOut[k] = Object.keys(kab[k]).map(function (g) { return kab[k][g]; });
   });
 
-  return { kab: kabOut, generatedAt: new Date().toISOString() };
+  return { kab: kabOut, generatedAt: new Date().toISOString(), sheetUpdatedAt: sheetLastUpdated_(ss) };
+}
+
+// Waktu terakhir Google Sheet sumber diubah (metadata file Drive) — dipakai dasbor untuk
+// menampilkan "Update terakhir", berbeda dari generatedAt (waktu respons ini dibuat).
+function sheetLastUpdated_(ss) {
+  try {
+    return DriveApp.getFileById(ss.getId()).getLastUpdated().toISOString();
+  } catch (e) {
+    return null;
+  }
 }
 
 function appendRtlSubmission_(body) {
