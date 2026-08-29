@@ -4,14 +4,19 @@ Replika dari dasbor `Dasbor BOSP Kinerja Terbaik 2026 - BPMP Provinsi NTB`, disa
 Google Sheet sumber baru:
 [Gugus Belajar BOSP Kinerja Terbaik NTB](https://docs.google.com/spreadsheets/d/1DkcV9abO5Db_b-qFZ2cz14v74CBvFUW0IW2NafFK-64/edit).
 
-Dasbor ini adalah satu file HTML statis (`index.html`, React + Babel dimuat langsung di
-browser, tanpa proses build) yang mengambil datanya secara live dari Google Sheet lewat sebuah
-Google Apps Script Web App (`apps-script/Code.gs`).
+Dasbor ini adalah satu file HTML statis (`index.html`, React dimuat dari CDN, kode aplikasinya
+sudah di-compile lebih dulu — lihat bagian "Mengubah tampilan/logika dasbor" di bawah) yang
+mengambil datanya secara live dari Google Sheet lewat sebuah Google Apps Script Web App
+(`apps-script/Code.gs`).
 
 ## Struktur repo
 
-- `index.html` — dasbor (Sebaran Gugus Belajar & Data Sekolah, Jadwal & Fasda, Daftar Fasda
-  dengan pencarian nama, Export Excel).
+- `index.html` — dasbor siap pakai (Sebaran Gugus Belajar & Data Sekolah, Jadwal & Fasda,
+  Daftar Fasda dengan pencarian & filter, Export Excel). Ini yang dibuka/di-hosting.
+- `src/app.jsx` — source code React yang mudah dibaca/diedit (JSX). **Ini yang diedit kalau
+  mau mengubah tampilan/logika** — bukan `index.html` langsung (lihat bagian di bawah).
+- `build/compile.js` — script kecil yang men-generate ulang bagian kode di dalam `index.html`
+  dari `src/app.jsx`.
 - `apps-script/Code.gs` — backend yang dipasang (bound) ke Google Sheet, menyediakan:
   - `doGet` — membaca sheet dan mengembalikan JSON data dasbor, termasuk `sheetUpdatedAt`
     (waktu terakhir Google Sheet sumber diubah, dari metadata Google Drive) yang ditampilkan
@@ -75,14 +80,34 @@ Kedua tab ini sudah tersedia di Google Sheet sumber yang ditautkan di atas.
   tersebut (karena datanya milik sheet lain), dan sebagai gantinya dasbor **otomatis memuat
   data langsung dari `APPS_SCRIPT_URL` saat halaman dibuka**, dengan tampilan status
   memuat/kosong/gagal yang jelas.
-- Library React, ReactDOM, Babel, dan SheetJS (untuk fitur Export Excel) dimuat dari CDN,
-  bukan disisipkan langsung ke file HTML — perilaku dan tampilannya identik, filenya jauh
-  lebih ringan. Halaman butuh koneksi internet saat dibuka.
+- Library React dan ReactDOM dimuat dari CDN saat halaman dibuka (bukan disisipkan langsung
+  ke file HTML) — perilaku dan tampilannya identik, filenya jauh lebih ringan. SheetJS (untuk
+  fitur Export Excel) baru dimuat **saat tombol Export diklik**, bukan di awal — supaya
+  pengunjung yang tidak memakai fitur itu tidak ikut menunggu unduhan yang tidak terpakai.
+  Halaman butuh koneksi internet saat dibuka.
 - Seluruh logika, tampilan, filter, grafik, dan halaman ("Sebaran Gugus", "Jadwal & Fasda")
   sama persis dengan dasbor asli.
 - Ditambahkan halaman ketiga **"Daftar Fasda"**: daftar seluruh penugasan Fasda (Bimtek &
   Implementasi × Tata Kelola/Litnum/Digitalisasi) dengan pencarian berdasarkan nama fasda dan
   export Excel.
+
+## Mengubah tampilan/logika dasbor
+
+`index.html` tidak lagi ditulis tangan langsung — bagian kodenya di-*generate* dari
+`src/app.jsx` supaya browser pengunjung tidak perlu mengunduh Babel atau menerjemahkan JSX
+sendiri (lebih cepat dimuat). Alurnya:
+
+1. Edit `src/app.jsx` (ini file JSX yang mudah dibaca, sama seperti sebelumnya).
+2. Sekali saja per lingkungan kerja: `npm install --no-save @babel/standalone`
+3. Jalankan `node build/compile.js` dari root repo — ini akan menimpa ulang bagian kode di
+   dalam `index.html` (di antara komentar `/* @COMPILED_APP_JSX_START@ */` dan
+   `/* @COMPILED_APP_JSX_END@ */`) dengan hasil compile terbaru.
+4. Commit `src/app.jsx` **dan** `index.html` yang sudah ter-update bersamaan.
+
+Jangan edit bagian kode di dalam marker tersebut secara langsung di `index.html` — perubahan
+itu akan tertimpa saat `build/compile.js` dijalankan lagi. Dua konfigurasi di `index.html`
+(`APPS_SCRIPT_URL` dan `FASDA_PAGE_PASSWORD`) tetap aman diedit langsung di `index.html` seperti
+biasa — dua baris itu ada di luar bagian yang di-generate.
 
 ## Catatan keamanan: password "Daftar Fasda"
 
