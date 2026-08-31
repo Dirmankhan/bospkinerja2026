@@ -1561,6 +1561,9 @@ function Page4() {
       type: "password",
       value: passwordInput,
       autoFocus: true,
+      autoCapitalize: "off",
+      autoCorrect: "off",
+      spellCheck: "false",
       onChange: e => {
         setPasswordInput(e.target.value);
         setPasswordError("");

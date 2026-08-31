@@ -720,6 +720,7 @@ function Page4() {
         <div style={{fontFamily:"'Fraunces', serif", fontSize:20, fontWeight:600, color: INK, marginBottom:8}}>Halaman Terkunci</div>
         <p style={{color:"#6b6154", fontSize:13, marginBottom:18, lineHeight:1.6}}>Masukkan password untuk melihat Daftar Fasda.</p>
         <input type="password" value={passwordInput} autoFocus
+          autoCapitalize="off" autoCorrect="off" spellCheck="false"
           onChange={e=>{ setPasswordInput(e.target.value); setPasswordError(""); }}
           onKeyDown={e=>{ if (e.key === "Enter") tryUnlock(); }}
           placeholder="Password" style={{...inputStyle, textAlign:"center", marginBottom:10}} />
