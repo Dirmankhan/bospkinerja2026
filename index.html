@@ -1121,36 +1121,42 @@ function Page2() {
       const bimtekRows = [{
         label: "Bimtek Tata Kelola",
         peny: tl.bimtek_spmi_peny,
+        tempat: tl.bimtek_spmi_tempat,
         tgl: tl.bimtek_spmi_tgl,
         fasda: tl.bimtek_spmi_fasda,
         tone: "rust"
       }, {
         label: "Bimtek Litnum",
         peny: tl.bimtek_lit_peny,
+        tempat: tl.bimtek_lit_tempat,
         tgl: tl.bimtek_lit_tgl,
         fasda: tl.bimtek_lit_fasda,
         tone: "teal"
       }, {
         label: "Bimtek Digitalisasi",
         peny: tl.bimtek_dig_peny,
+        tempat: tl.bimtek_dig_tempat,
         tgl: tl.bimtek_dig_tgl,
         fasda: tl.bimtek_dig_fasda,
         tone: "gold"
       }, {
         label: "Implementasi Tata Kelola",
         peny: tl.impl_spmi_peny,
+        tempat: tl.impl_spmi_tempat,
         tgl: tl.impl_spmi_tgl,
         fasda: tl.impl_spmi_fasda,
         tone: "rust"
       }, {
         label: "Implementasi Litnum",
         peny: tl.impl_lit_peny,
+        tempat: tl.impl_lit_tempat,
         tgl: tl.impl_lit_tgl,
         fasda: tl.impl_lit_fasda,
         tone: "teal"
       }, {
         label: "Implementasi Digitalisasi",
         peny: tl.impl_dig_peny,
+        tempat: tl.impl_dig_tempat,
         tgl: tl.impl_dig_tgl,
         fasda: tl.impl_dig_fasda,
         tone: "gold"
@@ -1340,6 +1346,11 @@ function Page2() {
           ...th,
           padding: "7px 12px"
         }
+      }, "Tempat Kegiatan"), /*#__PURE__*/React.createElement("th", {
+        style: {
+          ...th,
+          padding: "7px 12px"
+        }
       }, "Tanggal"), /*#__PURE__*/React.createElement("th", {
         style: {
           ...th,
@@ -1364,6 +1375,11 @@ function Page2() {
           padding: "6px 12px"
         }
       }, naVal(r.peny)), /*#__PURE__*/React.createElement("td", {
+        style: {
+          ...td,
+          padding: "6px 12px"
+        }
+      }, naVal(r.tempat)), /*#__PURE__*/React.createElement("td", {
         style: {
           ...td,
           padding: "6px 12px"

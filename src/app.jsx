@@ -524,12 +524,12 @@ function Page2() {
                     const isOpen = expanded.has(key);
                     const tl = g.tl || {};
                     const bimtekRows = [
-                      { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust" },
-                      { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal" },
-                      { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold" },
-                      { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
-                      { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal" },
-                      { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold" },
+                      { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tempat: tl.bimtek_spmi_tempat, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust" },
+                      { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tempat: tl.bimtek_lit_tempat, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal" },
+                      { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tempat: tl.bimtek_dig_tempat, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold" },
+                      { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tempat: tl.impl_spmi_tempat, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
+                      { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tempat: tl.impl_lit_tempat, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal" },
+                      { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tempat: tl.impl_dig_tempat, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold" },
                     ];
                     return (
                       <React.Fragment key={key}>
@@ -585,6 +585,7 @@ function Page2() {
                                     <tr style={{background:PAPER2}}>
                                       <th style={{...th, padding:"7px 12px"}}>Jenis Kegiatan</th>
                                       <th style={{...th, padding:"7px 12px"}}>Penyelenggara</th>
+                                      <th style={{...th, padding:"7px 12px"}}>Tempat Kegiatan</th>
                                       <th style={{...th, padding:"7px 12px"}}>Tanggal</th>
                                       <th style={{...th, padding:"7px 12px"}}>Nama Fasda</th>
                                     </tr>
@@ -594,6 +595,7 @@ function Page2() {
                                       <tr key={ri} style={{background: ri%2?"#fbf8f1":"#fff"}}>
                                         <td style={{...td, padding:"6px 12px", fontWeight:600}}><Chip tone={r.tone}>{r.label}</Chip></td>
                                         <td style={{...td, padding:"6px 12px"}}>{naVal(r.peny)}</td>
+                                        <td style={{...td, padding:"6px 12px"}}>{naVal(r.tempat)}</td>
                                         <td style={{...td, padding:"6px 12px"}}>{naDate(r.tgl)}</td>
                                         <td style={{...td, padding:"6px 12px"}}>{naVal(r.fasda)}</td>
                                       </tr>
