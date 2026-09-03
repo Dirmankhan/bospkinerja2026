@@ -64,7 +64,10 @@ saja asalkan judul kolomnya sama persis:
   kolom `Jenis BOSP`, `Kab/Kota`, `NPSN`, `Jenjang`, `Status`, `Nama Sekolah`, `Penerima PID`,
   `kecamatan`, `Gugus Belajar`. **Jumlah sekolah, jumlah gugus, dan komposisi per jenjang di
   dasbor dihitung langsung dari baris-baris tab ini**, bukan dari kolom rekap manapun — supaya
-  selalu sesuai dengan data sekolah yang sebenarnya.
+  selalu sesuai dengan data sekolah yang sebenarnya. Gugus dikelompokkan berdasarkan **nama
+  Gugus Belajar yang unik** (bukan kombinasi Kab/Kota+nama) — supaya satu gugus tidak pernah
+  terhitung dua kali walau ada baris sekolah yang menulis Kab/Kota sedikit berbeda (typo/spasi)
+  untuk gugus yang sama; Kab/Kota gugus diambil dari kemunculan pertamanya di tab ini.
 - **Tab rekap per Gugus Belajar** (opsional, untuk metadata jadwal saja) — harus memuat kolom
   `Nama Gugus Belajar`, `Kewenangan`, `Gelombang Bimtek`, `Gelombang Implementasi`, serta kolom
   Tanggal/Penyelenggara/Fasda untuk Bimtek dan Implementasi (Tata Kelola, Litnum, Digitalisasi). Tab

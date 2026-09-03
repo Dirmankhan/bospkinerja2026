@@ -61,21 +61,25 @@ function buildDashboardData_() {
     if (gName) scheduleByGugus[gName] = r;
   });
 
-  // Susun kab -> gugus -> daftar sekolah langsung dari tab data mentah, satu baris per sekolah.
-  var kab = {};
+  // Kelompokkan HANYA berdasarkan Nama Gugus Belajar (unik secara global di seluruh sheet),
+  // bukan kombinasi Kab/Kota+nama — supaya satu gugus tidak pernah terhitung dua kali walau
+  // ada baris sekolah yang menulis Kab/Kota-nya sedikit berbeda (typo/spasi) untuk gugus yang
+  // sama. Kab/Kota gugus ditentukan dari kemunculan pertamanya di tab data.
+  var byGugus = {};
+  var gugusOrder = [];
   dataRows.forEach(function (r) {
     var kabKota = textVal_(r["Kab/Kota"]);
     var gName = textVal_(r["Gugus Belajar"]);
     var jenjang = textVal_(r["Jenjang"]);
     if (!kabKota || !gName) return;
 
-    if (!kab[kabKota]) kab[kabKota] = {};
-    if (!kab[kabKota][gName]) {
+    if (!byGugus[gName]) {
       var sched = scheduleByGugus[gName] || {};
       var kewenangan = textVal_(sched["Kewenangan"]);
       var gelBimtek = textVal_(sched["Gelombang Bimtek"]) || null;
       var gelImpl = textVal_(sched["Gelombang Implementasi"]) || null;
-      kab[kabKota][gName] = {
+      byGugus[gName] = {
+        kabKota_: kabKota,
         g: gName,
         c: {},
         t: 0,
@@ -105,9 +109,10 @@ function buildDashboardData_() {
           impl_dig_fasda: textVal_(sched["Fasda Implementasi Digitalisasi"]) || null,
         },
       };
+      gugusOrder.push(gName);
     }
 
-    var record = kab[kabKota][gName];
+    var record = byGugus[gName];
     record.schools.push({
       npsn: textVal_(r["NPSN"]),
       nama: textVal_(r["Nama Sekolah"]),
@@ -120,10 +125,15 @@ function buildDashboardData_() {
     if (jenjang) record.c[jenjang] = (record.c[jenjang] || 0) + 1;
   });
 
-  // Ratakan kab -> {gName: record} menjadi kab -> [record, ...] sesuai bentuk yang dipakai index.html.
+  // Susun kab -> [gugus, ...] — setiap nama gugus muncul tepat satu kali, di bawah Kab/Kota
+  // dari kemunculan pertamanya di tab data.
   var kabOut = {};
-  Object.keys(kab).forEach(function (k) {
-    kabOut[k] = Object.keys(kab[k]).map(function (g) { return kab[k][g]; });
+  gugusOrder.forEach(function (gName) {
+    var record = byGugus[gName];
+    var kabKota = record.kabKota_;
+    delete record.kabKota_;
+    if (!kabOut[kabKota]) kabOut[kabKota] = [];
+    kabOut[kabKota].push(record);
   });
 
   return { kab: kabOut, generatedAt: new Date().toISOString(), sheetUpdatedAt: sheetLastUpdated_(ss) };
