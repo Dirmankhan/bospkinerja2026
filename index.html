@@ -583,7 +583,7 @@ function Page1() {
   }), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "repeat(4, 1fr)",
+      gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
       gap: 14,
       marginBottom: 28
     }
@@ -645,7 +645,7 @@ function Page1() {
   }, s.value)))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "1.3fr 1fr",
+      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
       gap: 20,
       marginBottom: 28
     }
@@ -686,7 +686,7 @@ function Page1() {
   }))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "1fr 1fr 1fr 1.2fr",
+      gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
       gap: 14,
       marginBottom: 16,
       alignItems: "end"
@@ -771,7 +771,9 @@ function Page1() {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      marginBottom: 10
+      marginBottom: 10,
+      flexWrap: "wrap",
+      gap: 8
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -810,11 +812,12 @@ function Page1() {
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       maxHeight: 560,
-      overflowY: "auto"
+      overflow: "auto"
     }
   }, /*#__PURE__*/React.createElement("table", {
     style: {
       width: "100%",
+      minWidth: 900,
       borderCollapse: "collapse",
       fontSize: 13
     }
@@ -988,7 +991,7 @@ function Page2() {
   }), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "1fr 1fr",
+      gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
       gap: 14,
       marginBottom: 26
     }
@@ -1090,11 +1093,12 @@ function Page2() {
         background: "#fff",
         border: "1px solid " + LINE,
         borderRadius: 10,
-        overflow: "hidden"
+        overflow: "auto"
       }
     }, /*#__PURE__*/React.createElement("table", {
       style: {
         width: "100%",
+        minWidth: 420,
         borderCollapse: "collapse",
         fontSize: 13
       }
@@ -1238,11 +1242,12 @@ function Page2() {
       }, /*#__PURE__*/React.createElement("div", {
         style: {
           maxHeight: 220,
-          overflowY: "auto"
+          overflow: "auto"
         }
       }, /*#__PURE__*/React.createElement("table", {
         style: {
           width: "100%",
+          minWidth: 480,
           borderCollapse: "collapse",
           fontSize: 12
         }
@@ -1319,11 +1324,12 @@ function Page2() {
           background: "#fff",
           border: "1px solid " + LINE,
           borderRadius: 8,
-          overflow: "hidden"
+          overflow: "auto"
         }
       }, /*#__PURE__*/React.createElement("table", {
         style: {
           width: "100%",
+          minWidth: 640,
           borderCollapse: "collapse",
           fontSize: 12
         }
@@ -1614,7 +1620,7 @@ function Page4() {
   }), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "1fr 1fr 1fr 1fr",
+      gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
       gap: 14,
       marginBottom: 20,
       maxWidth: 1180
@@ -1695,7 +1701,9 @@ function Page4() {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      marginBottom: 10
+      marginBottom: 10,
+      flexWrap: "wrap",
+      gap: 8
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1734,11 +1742,12 @@ function Page4() {
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       maxHeight: 560,
-      overflowY: "auto"
+      overflow: "auto"
     }
   }, /*#__PURE__*/React.createElement("table", {
     style: {
       width: "100%",
+      minWidth: 760,
       borderCollapse: "collapse",
       fontSize: 13
     }
@@ -2074,7 +2083,7 @@ function Page3() {
   }), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "1fr 1fr 1fr",
+      gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
       gap: 14,
       marginBottom: 22
     }
@@ -2230,7 +2239,7 @@ function App() {
     style: {
       maxWidth: 1180,
       margin: "0 auto",
-      padding: "22px 28px 0"
+      padding: "clamp(14px, 4vw, 22px) clamp(14px, 4vw, 28px) 0"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2251,7 +2260,7 @@ function App() {
   }, "BPMP Provinsi Nusa Tenggara Barat"), /*#__PURE__*/React.createElement("h1", {
     style: {
       fontFamily: "'Fraunces', serif",
-      fontSize: 26,
+      fontSize: "clamp(20px, 5vw, 26px)",
       fontWeight: 600,
       margin: "4px 0 0"
     }
@@ -2261,7 +2270,8 @@ function App() {
       gap: 16,
       fontSize: 12,
       color: "#6b6154",
-      alignItems: "center"
+      alignItems: "center",
+      flexWrap: "wrap"
     }
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", {
     style: {
@@ -2306,12 +2316,15 @@ function App() {
       alignItems: "center",
       justifyContent: "space-between",
       gap: 12,
-      marginTop: 20
+      marginTop: 20,
+      flexWrap: "wrap"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
-      gap: 4
+      gap: 4,
+      overflowX: "auto",
+      maxWidth: "100%"
     }
   }, pages.map(p => /*#__PURE__*/React.createElement("button", {
     key: p.id,
@@ -2320,6 +2333,8 @@ function App() {
       display: "flex",
       alignItems: "center",
       gap: 7,
+      flexShrink: 0,
+      whiteSpace: "nowrap",
       padding: "10px 16px",
       fontSize: 13,
       fontWeight: 600,
@@ -2341,7 +2356,7 @@ function App() {
     style: {
       maxWidth: 1180,
       margin: "0 auto",
-      padding: "28px"
+      padding: "clamp(14px, 4vw, 28px)"
     },
     key: tick
   }, !DATA.kab ? /*#__PURE__*/React.createElement("div", {

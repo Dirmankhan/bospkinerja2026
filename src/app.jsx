@@ -314,7 +314,7 @@ function Page1() {
     <div>
       <SectionLabel eyebrow={"Peta Sebaran · " + grandTotalSchools + " Satdik"} title="Sebaran Gugus Belajar & Data Sekolah" sub="Kab/Kota, gugus belajar, dan komposisi jenjang penerima BOSP Kinerja Terbaik 2026 di seluruh Nusa Tenggara Barat." />
 
-      <div style={{display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap: 14, marginBottom: 28}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(150px, 1fr))", gap: 14, marginBottom: 28}}>
         {[
           {label:"Total Satdik Penerima", value: grandTotalSchools, icon: School, tone:"rust"},
           {label:"Total Gugus Belajar", value: grandTotalGugus, icon: Layers, tone:"teal"},
@@ -329,7 +329,7 @@ function Page1() {
         ))}
       </div>
 
-      <div style={{display:"grid", gridTemplateColumns:"1.3fr 1fr", gap: 20, marginBottom: 28}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 28}}>
         <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, padding:20}}>
           <div style={{fontSize:13, fontWeight:700, color: INK, marginBottom:14}}>Jumlah Satdik per Kabupaten/Kota</div>
           <SimpleBarChart data={kabTotals} activeKab={activeKab} onBarClick={k=>setActiveKab(k)} />
@@ -340,7 +340,7 @@ function Page1() {
         </div>
       </div>
 
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1.2fr", gap:14, marginBottom:16, alignItems:"end"}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(160px, 1fr))", gap:14, marginBottom:16, alignItems:"end"}}>
         <div>
           <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Kabupaten/Kota</div>
           <select value={activeKab} onChange={e=>setActiveKab(e.target.value)} style={selectStyle}>
@@ -366,7 +366,7 @@ function Page1() {
         </div>
       </div>
 
-      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10, flexWrap:"wrap", gap:8}}>
         <div style={{fontSize:12, color:"#8a7f6e"}}>{filteredSchools.length} satuan pendidikan ditemukan</div>
         <button onClick={exportExcel} disabled={exporting}
           style={{display:"inline-flex", alignItems:"center", gap:6, background:"#fff", border:"1px solid " + LINE, borderRadius:8, padding:"7px 12px", fontSize:12, fontWeight:600, color: INK, cursor: exporting ? "default" : "pointer", opacity: exporting ? 0.6 : 1}}>
@@ -375,8 +375,8 @@ function Page1() {
       </div>
 
       <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"hidden"}}>
-        <div style={{maxHeight: 560, overflowY:"auto"}}>
-          <table style={{width:"100%", borderCollapse:"collapse", fontSize: 13}}>
+        <div style={{maxHeight: 560, overflow:"auto"}}>
+          <table style={{width:"100%", minWidth:900, borderCollapse:"collapse", fontSize: 13}}>
 
             <thead>
               <tr style={{position:"sticky", top:0, background: PAPER2, zIndex:1}}>
@@ -472,7 +472,7 @@ function Page2() {
     <div>
       <SectionLabel eyebrow={gelombangGroups.length + " Gelombang · Agustus–September 2026"} title="Jadwal & Fasda per Gelombang" sub="Pilih kabupaten/kota dan jenjang untuk melihat gugus belajar yang terjadwal pada tiap gelombang, lengkap dengan anggota gugus dan fasilitator daerah (Fasda)." />
 
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:26}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:14, marginBottom:26}}>
         <div>
           <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Kabupaten/Kota</div>
           <select value={activeKab} onChange={e=>setActiveKab(e.target.value)} style={selectStyle}>
@@ -509,8 +509,8 @@ function Page2() {
               <span style={{fontWeight:700, color:"#6b6154"}}>Implementasi</span> — Tata Kelola: {naDate(sample.impl_spmi_tgl)} · Litnum: {naDate(sample.impl_lit_tgl)} · Digitalisasi: {naDate(sample.impl_dig_tgl)}
             </div>
 
-            <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"hidden"}}>
-              <table style={{width:"100%", borderCollapse:"collapse", fontSize:13}}>
+            <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"auto"}}>
+              <table style={{width:"100%", minWidth:420, borderCollapse:"collapse", fontSize:13}}>
                 <thead>
                   <tr style={{background:PAPER2}}>
                     <th style={th}>Kabupaten/Kota</th>
@@ -553,8 +553,8 @@ function Page2() {
 
                               <div style={{fontSize:12.5, fontWeight:700, color: INK, marginBottom:6}}>Anggota Gugus Belajar</div>
                               <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 8, overflow:"hidden", marginBottom:18}}>
-                                <div style={{maxHeight: 220, overflowY:"auto"}}>
-                                  <table style={{width:"100%", borderCollapse:"collapse", fontSize:12}}>
+                                <div style={{maxHeight: 220, overflow:"auto"}}>
+                                  <table style={{width:"100%", minWidth:480, borderCollapse:"collapse", fontSize:12}}>
                                     <thead>
                                       <tr style={{position:"sticky", top:0, background:PAPER2}}>
                                         <th style={{...th, padding:"7px 12px"}}>NPSN</th>
@@ -579,8 +579,8 @@ function Page2() {
                               </div>
 
                               <div style={{fontSize:12.5, fontWeight:700, color: INK, marginBottom:6}}>Jadwal & Fasda Bimtek dan Implementasi</div>
-                              <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 8, overflow:"hidden"}}>
-                                <table style={{width:"100%", borderCollapse:"collapse", fontSize:12}}>
+                              <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 8, overflow:"auto"}}>
+                                <table style={{width:"100%", minWidth:640, borderCollapse:"collapse", fontSize:12}}>
                                   <thead>
                                     <tr style={{background:PAPER2}}>
                                       <th style={{...th, padding:"7px 12px"}}>Jenis Kegiatan</th>
@@ -736,7 +736,7 @@ function Page4() {
     <div>
       <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
 
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:14, marginBottom:20, maxWidth:1180}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(160px, 1fr))", gap:14, marginBottom:20, maxWidth:1180}}>
         <div>
           <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Gelombang</div>
           <MultiSelect options={gelombangOptions} selected={activeGelombangs} onChange={setActiveGelombangs} placeholder="Semua Gelombang" />
@@ -759,7 +759,7 @@ function Page4() {
         </div>
       </div>
 
-      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10, flexWrap:"wrap", gap:8}}>
         <div style={{fontSize:12, color:"#8a7f6e"}}>{filteredRows.length} penugasan ditemukan</div>
         <button onClick={exportExcel} disabled={exporting}
           style={{display:"inline-flex", alignItems:"center", gap:6, background:"#fff", border:"1px solid " + LINE, borderRadius:8, padding:"7px 12px", fontSize:12, fontWeight:600, color: INK, cursor: exporting ? "default" : "pointer", opacity: exporting ? 0.6 : 1}}>
@@ -768,8 +768,8 @@ function Page4() {
       </div>
 
       <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"hidden"}}>
-        <div style={{maxHeight: 560, overflowY:"auto"}}>
-          <table style={{width:"100%", borderCollapse:"collapse", fontSize: 13}}>
+        <div style={{maxHeight: 560, overflow:"auto"}}>
+          <table style={{width:"100%", minWidth:760, borderCollapse:"collapse", fontSize: 13}}>
             <thead>
               <tr style={{position:"sticky", top:0, background: PAPER2, zIndex:1}}>
                 <th style={th}>Nama Fasda</th>
@@ -931,7 +931,7 @@ function Page3() {
     <div>
       <SectionLabel eyebrow="Satuan Pendidikan sebagai Penyelenggara" title="Pelaksanaan RTL per Satuan Pendidikan" sub="Pilih kabupaten/kota, gugus belajar, lalu satuan pendidikan untuk mengunggah link Dokumen RTL dan link Bahan/Hasil dari RTL tersebut." />
 
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:14, marginBottom:22}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:14, marginBottom:22}}>
         <div>
           <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Kabupaten/Kota</div>
           <select value={activeKab} onChange={e=>setActiveKab(e.target.value)} style={selectStyle}>
@@ -1025,13 +1025,13 @@ function App() {
       `}</style>
 
       <div style={{borderBottom:"1px solid " + LINE, background:"#fbf8f1"}}>
-        <div style={{maxWidth: 1180, margin:"0 auto", padding:"22px 28px 0"}}>
+        <div style={{maxWidth: 1180, margin:"0 auto", padding:"clamp(14px, 4vw, 22px) clamp(14px, 4vw, 28px) 0"}}>
           <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap: 12}}>
             <div>
               <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.16em", textTransform:"uppercase", color: RUST}}>BPMP Provinsi Nusa Tenggara Barat</div>
-              <h1 style={{fontFamily:"'Fraunces', serif", fontSize:26, fontWeight:600, margin:"4px 0 0"}}>Dasbor BOSP Kinerja Terbaik 2026</h1>
+              <h1 style={{fontFamily:"'Fraunces', serif", fontSize:"clamp(20px, 5vw, 26px)", fontWeight:600, margin:"4px 0 0"}}>Dasbor BOSP Kinerja Terbaik 2026</h1>
             </div>
-            <div style={{display:"flex", gap:16, fontSize:12, color:"#6b6154", alignItems:"center"}}>
+            <div style={{display:"flex", gap:16, fontSize:12, color:"#6b6154", alignItems:"center", flexWrap:"wrap"}}>
               <div><b style={{color:INK}}>{meta.totalSekolah}</b> Satdik</div>
               <div><b style={{color:INK}}>{meta.totalGugus}</b> Gugus</div>
               <div><b style={{color:INK}}>{meta.totalKab}</b> Kab/Kota</div>
@@ -1043,12 +1043,12 @@ function App() {
               </button>
             </div>
           </div>
-          <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap: 12, marginTop: 20}}>
-            <div style={{display:"flex", gap: 4}}>
+          <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap: 12, marginTop: 20, flexWrap:"wrap"}}>
+            <div style={{display:"flex", gap: 4, overflowX:"auto", maxWidth:"100%"}}>
               {pages.map(p => (
                 <button key={p.id} onClick={()=>setPage(p.id)}
                   style={{
-                    display:"flex", alignItems:"center", gap:7,
+                    display:"flex", alignItems:"center", gap:7, flexShrink:0, whiteSpace:"nowrap",
                     padding:"10px 16px", fontSize:13, fontWeight:600, cursor:"pointer",
                     background:"transparent", border:"none",
                     borderBottom: page===p.id ? "2.5px solid #b5502f" : "2.5px solid transparent",
@@ -1066,7 +1066,7 @@ function App() {
         </div>
       </div>
 
-      <div style={{maxWidth: 1180, margin:"0 auto", padding:"28px"}} key={tick}>
+      <div style={{maxWidth: 1180, margin:"0 auto", padding:"clamp(14px, 4vw, 28px)"}} key={tick}>
         {!DATA.kab ? (
           <div style={{textAlign:"center", padding:"90px 20px", color:"#8a7f6e", fontSize:13.5, lineHeight:1.7}}>
             {!APPS_SCRIPT_URL && <div>Tempel <code>APPS_SCRIPT_URL</code> di dalam kode (lihat <code>README.md</code>) untuk memuat data dari Google Sheets.</div>}
