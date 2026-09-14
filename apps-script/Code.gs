@@ -45,8 +45,9 @@ function jsonOutput_(obj) {
 
 function buildDashboardData_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var dataSheet = findSheetByHeader_(ss, DATA_SHEET_HEADER_HINT);
-  var gugusSheet = findSheetByHeader_(ss, GUGUS_SHEET_HEADER_HINT);
+  var found = findDataSheets_(ss);
+  var dataSheet = found[DATA_SHEET_HEADER_HINT];
+  var gugusSheet = found[GUGUS_SHEET_HEADER_HINT];
   if (!dataSheet) throw new Error('Tidak menemukan tab dengan kolom "' + DATA_SHEET_HEADER_HINT + '".');
 
   var dataRows = readRows_(dataSheet);
@@ -142,17 +143,32 @@ function buildDashboardData_() {
     kabOut[kabKota].push(record);
   });
 
-  return { kab: kabOut, generatedAt: new Date().toISOString(), sheetUpdatedAt: sheetLastUpdated_(ss) };
+  return { kab: kabOut, generatedAt: new Date().toISOString(), sheetUpdatedAt: sheetLastUpdatedCached_(ss) };
 }
 
 // Waktu terakhir Google Sheet sumber diubah (metadata file Drive) — dipakai dasbor untuk
-// menampilkan "Update terakhir", berbeda dari generatedAt (waktu respons ini dibuat).
-function sheetLastUpdated_(ss) {
+// menampilkan "Update terakhir", berbeda dari generatedAt (waktu respons ini dibuat). DriveApp
+// adalah panggilan API terpisah dari Sheets (lumayan lambat), jadi hasilnya di-cache sebentar
+// supaya tidak setiap pemuatan dasbor ikut menunggunya — staleness 2 menit tidak masalah untuk
+// label "Update terakhir".
+function sheetLastUpdatedCached_(ss) {
+  var cache = CacheService.getScriptCache();
+  var cacheKey = "sheetUpdatedAt";
   try {
-    return DriveApp.getFileById(ss.getId()).getLastUpdated().toISOString();
+    var cached = cache.get(cacheKey);
+    if (cached) return cached;
+  } catch (e) { /* cache tidak tersedia, lanjut ambil langsung dari Drive */ }
+
+  var value;
+  try {
+    value = DriveApp.getFileById(ss.getId()).getLastUpdated().toISOString();
   } catch (e) {
     return null;
   }
+  try {
+    cache.put(cacheKey, value, 120);
+  } catch (e) { /* abaikan kalau gagal menyimpan cache */ }
+  return value;
 }
 
 function appendRtlSubmission_(body) {
@@ -179,26 +195,36 @@ function appendRtlSubmission_(body) {
 
 /* ---------------------------- util sheet -------------------------------- */
 
-// Cari sheet yang salah satu dari 5 baris pertamanya memuat kolom `headerHint`.
-function findSheetByHeader_(ss, headerHint) {
+// Cari kedua tab sumber (data mentah & rekap gugus) dalam SATU kali jalan lewat semua sheet,
+// bukan satu scan penuh terpisah per tab yang dicari — spreadsheet ini punya banyak tab
+// (~15), jadi memindainya dua kali (dulu: sekali per header yang dicari) menggandakan jumlah
+// pemanggilan Sheets API tanpa perlu. Berhenti lebih awal begitu keduanya ketemu.
+function findDataSheets_(ss) {
   var sheets = ss.getSheets();
+  var hints = [DATA_SHEET_HEADER_HINT, GUGUS_SHEET_HEADER_HINT];
+  var found = {};
   for (var i = 0; i < sheets.length; i++) {
+    if (found[DATA_SHEET_HEADER_HINT] && found[GUGUS_SHEET_HEADER_HINT]) break;
     var sheet = sheets[i];
     var lastCol = sheet.getLastColumn();
     var scanRows = Math.min(5, sheet.getLastRow());
     if (lastCol === 0 || scanRows === 0) continue;
     var values = sheet.getRange(1, 1, scanRows, lastCol).getValues();
     for (var rIdx = 0; rIdx < values.length; rIdx++) {
-      if (values[rIdx].some(function (v) { return textVal_(v) === headerHint; })) {
-        return { sheet: sheet, headerRow: rIdx + 1 };
-      }
+      var row = values[rIdx];
+      hints.forEach(function (hint) {
+        if (found[hint]) return;
+        if (row.some(function (v) { return textVal_(v) === hint; })) {
+          found[hint] = { sheet: sheet, headerRow: rIdx + 1, headers: row.map(textVal_) };
+        }
+      });
     }
   }
-  return null;
+  return found;
 }
 
-// Baca semua baris data sebagai array of object {namaKolom: nilai}, mulai persis
-// setelah baris header yang ditemukan oleh findSheetByHeader_.
+// Baca semua baris data sebagai array of object {namaKolom: nilai}, mulai persis setelah baris
+// header yang ditemukan oleh findDataSheets_ (headernya dipakai ulang, tidak diambil lagi).
 function readRows_(found) {
   var sheet = found.sheet;
   var lastRow = sheet.getLastRow();
@@ -206,7 +232,7 @@ function readRows_(found) {
   var headerRow = found.headerRow;
   if (lastRow <= headerRow) return [];
 
-  var headers = sheet.getRange(headerRow, 1, 1, lastCol).getValues()[0].map(textVal_);
+  var headers = found.headers;
   var values = sheet.getRange(headerRow + 1, 1, lastRow - headerRow, lastCol).getValues();
 
   return values

@@ -982,6 +982,28 @@ function formatUpdateTime(iso) {
   }
 }
 
+// Ambil data dari Apps Script dengan batas waktu per percobaan + coba ulang otomatis, supaya
+// "cold start"/hiccup sesekali (umum untuk Apps Script Web App) tidak langsung menampilkan
+// "Gagal memuat data" — baru menyerah setelah beberapa kali percobaan gagal berturut-turut.
+function fetchDataWithRetry_(url, maxAttempts) {
+  const attempt = (n) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    return fetch(url, { signal: controller.signal })
+      .then(r => r.json())
+      .then(json => {
+        if (!json || !json.kab) throw new Error("Format data tidak sesuai");
+        return json;
+      })
+      .finally(() => clearTimeout(timer))
+      .catch(err => {
+        if (n >= maxAttempts) throw err;
+        return new Promise(resolve => setTimeout(resolve, n * 1500)).then(() => attempt(n + 1));
+      });
+  };
+  return attempt(1);
+}
+
 function App() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState(APPS_SCRIPT_URL ? "loading" : "ready"); // ready | loading | error
@@ -991,10 +1013,8 @@ function App() {
   const loadData = () => {
     if (!APPS_SCRIPT_URL) return;
     setStatus("loading");
-    fetch(APPS_SCRIPT_URL)
-      .then(r => r.json())
+    fetchDataWithRetry_(APPS_SCRIPT_URL, 3)
       .then(json => {
-        if (!json || !json.kab) throw new Error("Format data tidak sesuai");
         DATA = json;
         setMeta(computeMetaFromData(json));
         setStatus("ready");
