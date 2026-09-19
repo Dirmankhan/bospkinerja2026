@@ -506,7 +506,7 @@ function Page2() {
             <div style={{fontSize:11.5, color:"#8a7f6e", lineHeight:1.7, marginBottom:12}}>
               <span style={{fontWeight:700, color:"#6b6154"}}>Bimtek</span> — Tata Kelola: {naDate(sample.bimtek_spmi_tgl)} · Litnum: {naDate(sample.bimtek_lit_tgl)} · Digitalisasi: {naDate(sample.bimtek_dig_tgl)}
               &nbsp;&nbsp;|&nbsp;&nbsp;
-              <span style={{fontWeight:700, color:"#6b6154"}}>Implementasi</span> — Tata Kelola: {naDate(sample.impl_spmi_tgl)} · Litnum: {naDate(sample.impl_lit_tgl)} · Digitalisasi: {naDate(sample.impl_dig_tgl)}
+              <span style={{fontWeight:700, color:"#6b6154"}}>Refleksi Implementasi</span> — Tata Kelola: {naDate(sample.impl_spmi_tgl)} · Litnum: {naDate(sample.impl_lit_tgl)} · Digitalisasi: {naDate(sample.impl_dig_tgl)}
             </div>
 
             <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"auto"}}>
@@ -527,9 +527,9 @@ function Page2() {
                       { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tempat: tl.bimtek_spmi_tempat, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust" },
                       { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tempat: tl.bimtek_lit_tempat, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal" },
                       { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tempat: tl.bimtek_dig_tempat, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold" },
-                      { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tempat: tl.impl_spmi_tempat, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
-                      { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tempat: tl.impl_lit_tempat, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal" },
-                      { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tempat: tl.impl_dig_tempat, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold" },
+                      { label: "Refleksi Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tempat: tl.impl_spmi_tempat, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust" },
+                      { label: "Refleksi Implementasi Litnum", peny: tl.impl_lit_peny, tempat: tl.impl_lit_tempat, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal" },
+                      { label: "Refleksi Implementasi Digitalisasi", peny: tl.impl_dig_peny, tempat: tl.impl_dig_tempat, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold" },
                     ];
                     return (
                       <React.Fragment key={key}>
@@ -578,7 +578,7 @@ function Page2() {
                                 </div>
                               </div>
 
-                              <div style={{fontSize:12.5, fontWeight:700, color: INK, marginBottom:6}}>Jadwal & Fasda Bimtek dan Implementasi</div>
+                              <div style={{fontSize:12.5, fontWeight:700, color: INK, marginBottom:6}}>Jadwal & Fasda Bimtek dan Refleksi Implementasi</div>
                               <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 8, overflow:"auto"}}>
                                 <table style={{width:"100%", minWidth:640, borderCollapse:"collapse", fontSize:12}}>
                                   <thead>
@@ -654,9 +654,9 @@ function Page4() {
         { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust", gel: tl.gel },
         { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal", gel: tl.gel },
         { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold", gel: tl.gel },
-        { label: "Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust", gel: tl.gel_impl },
-        { label: "Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal", gel: tl.gel_impl },
-        { label: "Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold", gel: tl.gel_impl },
+        { label: "Refleksi Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust", gel: tl.gel_impl },
+        { label: "Refleksi Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal", gel: tl.gel_impl },
+        { label: "Refleksi Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold", gel: tl.gel_impl },
       ];
       items.forEach(it => out.push({ kab: k, gugus: g.g, ...it }));
     }));
@@ -734,7 +734,7 @@ function Page4() {
 
   return (
     <div>
-      <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
+      <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Refleksi Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
 
       <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(160px, 1fr))", gap:14, marginBottom:20, maxWidth:1180}}>
         <div>

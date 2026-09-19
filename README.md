@@ -69,8 +69,8 @@ saja asalkan judul kolomnya sama persis:
   terhitung dua kali walau ada baris sekolah yang menulis Kab/Kota sedikit berbeda (typo/spasi)
   untuk gugus yang sama; Kab/Kota gugus diambil dari kemunculan pertamanya di tab ini.
 - **Tab rekap per Gugus Belajar** (opsional, untuk metadata jadwal saja) — harus memuat kolom
-  `Nama Gugus Belajar`, `Kewenangan`, `Gelombang Bimtek`, `Gelombang Implementasi`, serta kolom
-  Tanggal/Penyelenggara/Fasda untuk Bimtek dan Implementasi (Tata Kelola, Litnum, Digitalisasi). Tab
+  `Nama Gugus Belajar`, `Kewenangan`, `Gelombang Bimtek`, `Gelombang Refleksi Implementasi`, serta kolom
+  Tanggal/Penyelenggara/Fasda untuk Bimtek dan Refleksi Implementasi (Tata Kelola, Litnum, Digitalisasi). Tab
   ini hanya dipakai untuk melengkapi info jadwal & fasilitator per gugus (dicocokkan lewat nama
   gugus) — kolom jumlah/jenjang di tab ini **tidak** dipakai untuk menghitung apa pun di dasbor.
 
@@ -91,7 +91,7 @@ Kedua tab ini sudah tersedia di Google Sheet sumber yang ditautkan di atas.
 - Seluruh logika, tampilan, filter, grafik, dan halaman ("Sebaran Gugus", "Jadwal & Fasda")
   sama persis dengan dasbor asli.
 - Ditambahkan halaman ketiga **"Daftar Fasda"**: daftar seluruh penugasan Fasda (Bimtek &
-  Implementasi × Tata Kelola/Litnum/Digitalisasi) dengan pencarian berdasarkan nama fasda dan
+  Refleksi Implementasi × Tata Kelola/Litnum/Digitalisasi) dengan pencarian berdasarkan nama fasda dan
   export Excel.
 
 ## Mengubah tampilan/logika dasbor

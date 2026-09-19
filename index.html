@@ -866,25 +866,25 @@ function Page1() {
     style: {
       color: "#a89e8c"
     }
-  }, "—")), /*#__PURE__*/React.createElement("td", {
+  }, "\u2014")), /*#__PURE__*/React.createElement("td", {
     style: td
   }, s.spmiTgl || /*#__PURE__*/React.createElement("span", {
     style: {
       color: "#a89e8c"
     }
-  }, "—")), /*#__PURE__*/React.createElement("td", {
+  }, "\u2014")), /*#__PURE__*/React.createElement("td", {
     style: td
   }, s.litTgl || /*#__PURE__*/React.createElement("span", {
     style: {
       color: "#a89e8c"
     }
-  }, "—")), /*#__PURE__*/React.createElement("td", {
+  }, "\u2014")), /*#__PURE__*/React.createElement("td", {
     style: td
   }, s.digTgl || /*#__PURE__*/React.createElement("span", {
     style: {
       color: "#a89e8c"
     }
-  }, "—")), /*#__PURE__*/React.createElement("td", {
+  }, "\u2014")), /*#__PURE__*/React.createElement("td", {
     style: td
   }, s.kec), /*#__PURE__*/React.createElement("td", {
     style: td
@@ -1083,12 +1083,12 @@ function Page2() {
         fontWeight: 700,
         color: "#6b6154"
       }
-    }, "Bimtek"), " — Tata Kelola: ", naDate(sample.bimtek_spmi_tgl), " · Litnum: ", naDate(sample.bimtek_lit_tgl), " · Digitalisasi: ", naDate(sample.bimtek_dig_tgl), "\xA0\xA0|\xA0\xA0", /*#__PURE__*/React.createElement("span", {
+    }, "Bimtek"), " \u2014 Tata Kelola: ", naDate(sample.bimtek_spmi_tgl), " \xB7 Litnum: ", naDate(sample.bimtek_lit_tgl), " \xB7 Digitalisasi: ", naDate(sample.bimtek_dig_tgl), "\xA0\xA0|\xA0\xA0", /*#__PURE__*/React.createElement("span", {
       style: {
         fontWeight: 700,
         color: "#6b6154"
       }
-    }, "Implementasi"), " — Tata Kelola: ", naDate(sample.impl_spmi_tgl), " · Litnum: ", naDate(sample.impl_lit_tgl), " · Digitalisasi: ", naDate(sample.impl_dig_tgl)), /*#__PURE__*/React.createElement("div", {
+    }, "Refleksi Implementasi"), " \u2014 Tata Kelola: ", naDate(sample.impl_spmi_tgl), " \xB7 Litnum: ", naDate(sample.impl_lit_tgl), " \xB7 Digitalisasi: ", naDate(sample.impl_dig_tgl)), /*#__PURE__*/React.createElement("div", {
       style: {
         background: "#fff",
         border: "1px solid " + LINE,
@@ -1144,21 +1144,21 @@ function Page2() {
         fasda: tl.bimtek_dig_fasda,
         tone: "gold"
       }, {
-        label: "Implementasi Tata Kelola",
+        label: "Refleksi Implementasi Tata Kelola",
         peny: tl.impl_spmi_peny,
         tempat: tl.impl_spmi_tempat,
         tgl: tl.impl_spmi_tgl,
         fasda: tl.impl_spmi_fasda,
         tone: "rust"
       }, {
-        label: "Implementasi Litnum",
+        label: "Refleksi Implementasi Litnum",
         peny: tl.impl_lit_peny,
         tempat: tl.impl_lit_tempat,
         tgl: tl.impl_lit_tgl,
         fasda: tl.impl_lit_fasda,
         tone: "teal"
       }, {
-        label: "Implementasi Digitalisasi",
+        label: "Refleksi Implementasi Digitalisasi",
         peny: tl.impl_dig_peny,
         tempat: tl.impl_dig_tempat,
         tgl: tl.impl_dig_tgl,
@@ -1319,7 +1319,7 @@ function Page2() {
           color: INK,
           marginBottom: 6
         }
-      }, "Jadwal & Fasda Bimtek dan Implementasi"), /*#__PURE__*/React.createElement("div", {
+      }, "Jadwal & Fasda Bimtek dan Refleksi Implementasi"), /*#__PURE__*/React.createElement("div", {
         style: {
           background: "#fff",
           border: "1px solid " + LINE,
@@ -1432,7 +1432,7 @@ function Page4() {
     style: {
       color: "#a89e8c"
     }
-  }, "—");
+  }, "\u2014");
   const rows = useMemo(() => {
     const out = [];
     kabList.forEach(k => (DATA.kab[k] || []).forEach(g => {
@@ -1459,21 +1459,21 @@ function Page4() {
         tone: "gold",
         gel: tl.gel
       }, {
-        label: "Implementasi Tata Kelola",
+        label: "Refleksi Implementasi Tata Kelola",
         peny: tl.impl_spmi_peny,
         tgl: tl.impl_spmi_tgl,
         fasda: tl.impl_spmi_fasda,
         tone: "rust",
         gel: tl.gel_impl
       }, {
-        label: "Implementasi Litnum",
+        label: "Refleksi Implementasi Litnum",
         peny: tl.impl_lit_peny,
         tgl: tl.impl_lit_tgl,
         fasda: tl.impl_lit_fasda,
         tone: "teal",
         gel: tl.gel_impl
       }, {
-        label: "Implementasi Digitalisasi",
+        label: "Refleksi Implementasi Digitalisasi",
         peny: tl.impl_dig_peny,
         tgl: tl.impl_dig_tgl,
         fasda: tl.impl_dig_fasda,
@@ -1615,7 +1615,7 @@ function Page4() {
   }
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionLabel, {
     eyebrow: "Direktori Fasda · " + rows.filter(r => r.fasda).length + " Penugasan",
-    title: "Fasda per Kegiatan Bimtek & Implementasi",
+    title: "Fasda per Kegiatan Bimtek & Refleksi Implementasi",
     sub: "Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya."
   }), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1913,7 +1913,7 @@ function SchoolUploadForm({
       color: "#8a7f6e",
       marginTop: 2
     }
-  }, "NPSN ", sekolah.npsn, " · ", sekolah.kec, " · Penyelenggara: satuan pendidikan")), saved && !editing && /*#__PURE__*/React.createElement(Chip, {
+  }, "NPSN ", sekolah.npsn, " \xB7 ", sekolah.kec, " \xB7 Penyelenggara: satuan pendidikan")), saved && !editing && /*#__PURE__*/React.createElement(Chip, {
     tone: "teal"
   }, /*#__PURE__*/React.createElement(CheckCircle2, {
     size: 11,
@@ -1941,7 +1941,7 @@ function SchoolUploadForm({
       color: INK,
       marginBottom: 6
     }
-  }, "Diunggah oleh ", /*#__PURE__*/React.createElement("b", null, saved.pengirim), " · ", saved.waktu), /*#__PURE__*/React.createElement("div", {
+  }, "Diunggah oleh ", /*#__PURE__*/React.createElement("b", null, saved.pengirim), " \xB7 ", saved.waktu), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "column",
@@ -2309,7 +2309,7 @@ function App() {
       fontSize: 11,
       color: "#8a7f6e"
     }
-  }, "Memuat…"), status === "error" && /*#__PURE__*/React.createElement("span", {
+  }, "Memuat\u2026"), status === "error" && /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 11,
       color: RUST
@@ -2329,7 +2329,7 @@ function App() {
       cursor: status === "loading" ? "default" : "pointer",
       opacity: status === "loading" ? 0.6 : 1
     }
-  }, "⟳ Segarkan"))), /*#__PURE__*/React.createElement("div", {
+  }, "\u27F3 Segarkan"))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       alignItems: "center",
@@ -2386,7 +2386,7 @@ function App() {
       fontSize: 13.5,
       lineHeight: 1.7
     }
-  }, !APPS_SCRIPT_URL && /*#__PURE__*/React.createElement("div", null, "Tempel ", /*#__PURE__*/React.createElement("code", null, "APPS_SCRIPT_URL"), " di dalam kode (lihat ", /*#__PURE__*/React.createElement("code", null, "README.md"), ") untuk memuat data dari Google Sheets."), APPS_SCRIPT_URL && status === "loading" && /*#__PURE__*/React.createElement("div", null, "Memuat data dari Google Sheets…"), APPS_SCRIPT_URL && status === "error" && /*#__PURE__*/React.createElement("div", {
+  }, !APPS_SCRIPT_URL && /*#__PURE__*/React.createElement("div", null, "Tempel ", /*#__PURE__*/React.createElement("code", null, "APPS_SCRIPT_URL"), " di dalam kode (lihat ", /*#__PURE__*/React.createElement("code", null, "README.md"), ") untuk memuat data dari Google Sheets."), APPS_SCRIPT_URL && status === "loading" && /*#__PURE__*/React.createElement("div", null, "Memuat data dari Google Sheets\u2026"), APPS_SCRIPT_URL && status === "error" && /*#__PURE__*/React.createElement("div", {
     style: {
       color: RUST
     }
@@ -2397,7 +2397,7 @@ function App() {
       color: "#a89e8c",
       padding: "18px 0 32px"
     }
-  }, "Program BOSP Kinerja Terbaik Tahun 2026 · Kemendikdasmen · ", meta.generatedAt ? "Data live dari Google Sheets" : "Data per Agustus 2026"));
+  }, "Program BOSP Kinerja Terbaik Tahun 2026 \xB7 Kemendikdasmen \xB7 ", meta.generatedAt ? "Data live dari Google Sheets" : "Data per Agustus 2026"));
 }
 const rootEl = document.getElementById("root");
 ReactDOM.createRoot(rootEl).render(React.createElement(App));

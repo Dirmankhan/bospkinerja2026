@@ -53,7 +53,7 @@ function buildDashboardData_() {
   var dataRows = readRows_(dataSheet);
   var gugusRows = gugusSheet ? readRows_(gugusSheet) : [];
 
-  // Jadwal Bimtek/Implementasi & Kewenangan per Gugus Belajar (dipakai sebagai lookup
+  // Jadwal Bimtek/Refleksi Implementasi & Kewenangan per Gugus Belajar (dipakai sebagai lookup
   // metadata saja). Sumber kebenaran untuk JUMLAH sekolah & gugus adalah tab data mentah
   // (satu baris = satu sekolah), bukan kolom rekap di tab ini.
   var scheduleByGugus = {};
@@ -78,7 +78,7 @@ function buildDashboardData_() {
       var sched = scheduleByGugus[gName] || {};
       var kewenangan = textVal_(sched["Kewenangan"]);
       var gelBimtek = textVal_(sched["Gelombang Bimtek"]) || null;
-      var gelImpl = textVal_(sched["Gelombang Implementasi"]) || null;
+      var gelImpl = textVal_(sched["Gelombang Refleksi Implementasi"]) || null;
       byGugus[gName] = {
         kabKota_: kabKota,
         g: gName,
@@ -102,18 +102,18 @@ function buildDashboardData_() {
           bimtek_dig_tempat: textVal_(sched["Tempat Kegiatan Bimtek Digitalisasi"]) || null,
           bimtek_dig_fasda: textVal_(sched["Fasda Bimtek Digitalisasi"]) || null,
           gel_impl: gelImpl,
-          impl_spmi_tgl: textVal_(sched["Tanggal Keg. Implementasi Tata Kelola"]) || null,
-          impl_spmi_peny: textVal_(sched["Penyelenggara Implementasi Tata Kelola"]) || null,
-          impl_spmi_tempat: textVal_(sched["Tempat Kegiatan Implementasi Tata Kelola"]) || null,
-          impl_spmi_fasda: textVal_(sched["Fasda Implementasi Tata Kelola"]) || null,
-          impl_lit_tgl: textVal_(sched["Tanggal Keg. Implementasi Litnum"]) || null,
-          impl_lit_peny: textVal_(sched["Penyelenggara Implementasi Litnum"]) || null,
-          impl_lit_tempat: textVal_(sched["Tempat Kegiatan Implementasi Litnum"]) || null,
-          impl_lit_fasda: textVal_(sched["Fasda Implementasi Litnum"]) || null,
-          impl_dig_tgl: textVal_(sched["Tanggal Keg. Implementasi Digitalisasi"]) || null,
-          impl_dig_peny: textVal_(sched["Penyelenggara Implementasi Digitalisasi"]) || null,
-          impl_dig_tempat: textVal_(sched["Tempat Kegiatan Implementasi Digitalisasi"]) || null,
-          impl_dig_fasda: textVal_(sched["Fasda Implementasi Digitalisasi"]) || null,
+          impl_spmi_tgl: textVal_(sched["Tanggal Keg. Refleksi Implementasi Tata Kelola"]) || null,
+          impl_spmi_peny: textVal_(sched["Penyelenggara Refleksi Implementasi Tata Kelola"]) || null,
+          impl_spmi_tempat: textVal_(sched["Tempat Kegiatan Refleksi Implementasi Tata Kelola"]) || null,
+          impl_spmi_fasda: textVal_(sched["Fasda Refleksi Implementasi Tata Kelola"]) || null,
+          impl_lit_tgl: textVal_(sched["Tanggal Keg. Refleksi Implementasi Litnum"]) || null,
+          impl_lit_peny: textVal_(sched["Penyelenggara Refleksi Implementasi Litnum"]) || null,
+          impl_lit_tempat: textVal_(sched["Tempat Kegiatan Refleksi Implementasi Litnum"]) || null,
+          impl_lit_fasda: textVal_(sched["Fasda Refleksi Implementasi Litnum"]) || null,
+          impl_dig_tgl: textVal_(sched["Tanggal Keg. Refleksi Implementasi Digitalisasi"]) || null,
+          impl_dig_peny: textVal_(sched["Penyelenggara Refleksi Implementasi Digitalisasi"]) || null,
+          impl_dig_tempat: textVal_(sched["Tempat Kegiatan Refleksi Implementasi Digitalisasi"]) || null,
+          impl_dig_fasda: textVal_(sched["Fasda Refleksi Implementasi Digitalisasi"]) || null,
         },
       };
       gugusOrder.push(gName);
