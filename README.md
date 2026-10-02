@@ -41,10 +41,13 @@ mengambil datanya secara live dari Google Sheet lewat sebuah Google Apps Script 
    const APPS_SCRIPT_URL = "";
    ```
    dan tempel URL dari langkah 4 di antara tanda kutip.
-6. Di file yang sama, cari baris berikut dan ganti dengan password pilihanmu untuk mengunci
-   tab **"Daftar Fasda"** (lihat catatan keamanan di bawah):
+6. Di file yang sama, cari baris berikut kalau mau mengganti username/password akun **Admin**
+   untuk tab **"Daftar Fasda"** (lihat bagian "Login Daftar Fasda" & catatan keamanan di
+   bawah). Akun Fasda lain (bukan Admin) **tidak** diisi di sini — itu diatur langsung di tab
+   "user" pada Google Sheet:
    ```js
-   const FASDA_PAGE_PASSWORD = "GANTI_PASSWORD_INI";
+   const FASDA_ADMIN_USERNAME = "admin";
+   const FASDA_ADMIN_PASSWORD = "mykeling";
    ```
 7. Simpan lalu buka `index.html` di browser (bisa langsung dibuka dari file lokal, atau
    di-hosting misalnya lewat GitHub Pages). Data akan otomatis dimuat saat halaman dibuka, dan
@@ -73,8 +76,13 @@ saja asalkan judul kolomnya sama persis:
   Tanggal/Penyelenggara/Fasda untuk Bimtek dan Refleksi Implementasi (Tata Kelola, Litnum, Digitalisasi). Tab
   ini hanya dipakai untuk melengkapi info jadwal & fasilitator per gugus (dicocokkan lewat nama
   gugus) — kolom jumlah/jenjang di tab ini **tidak** dipakai untuk menghitung apa pun di dasbor.
+- **Tab "user"** (untuk login halaman "Daftar Fasda") — harus memuat kolom
+  `Jenis Bimtek/Implementasi`, `Username`, `Password`. Satu baris = satu akun Fasda. Nilai
+  `Username` harus persis sama dengan nilai yang muncul di kolom Fasda pada tab rekap gugus di
+  atas (format "Nama - Kab/Kota"), supaya pencocokan jadwal milik Fasda tersebut berhasil.
+  Lihat bagian "Login Daftar Fasda" di bawah.
 
-Kedua tab ini sudah tersedia di Google Sheet sumber yang ditautkan di atas.
+Ketiga tab ini sudah tersedia di Google Sheet sumber yang ditautkan di atas.
 
 ## Catatan penyesuaian dari dasbor asli
 
@@ -108,16 +116,40 @@ sendiri (lebih cepat dimuat). Alurnya:
 4. Commit `src/app.jsx` **dan** `index.html` yang sudah ter-update bersamaan.
 
 Jangan edit bagian kode di dalam marker tersebut secara langsung di `index.html` — perubahan
-itu akan tertimpa saat `build/compile.js` dijalankan lagi. Dua konfigurasi di `index.html`
-(`APPS_SCRIPT_URL` dan `FASDA_PAGE_PASSWORD`) tetap aman diedit langsung di `index.html` seperti
-biasa — dua baris itu ada di luar bagian yang di-generate.
+itu akan tertimpa saat `build/compile.js` dijalankan lagi. Tiga konfigurasi di `index.html`
+(`APPS_SCRIPT_URL`, `FASDA_ADMIN_USERNAME`, `FASDA_ADMIN_PASSWORD`) tetap aman diedit langsung
+di `index.html` seperti biasa — ketiga baris itu ada di luar bagian yang di-generate.
 
-## Catatan keamanan: password "Daftar Fasda"
+## Login "Daftar Fasda"
 
-Tab "Daftar Fasda" dikunci password (`FASDA_PAGE_PASSWORD`), tapi ini **bukan keamanan
-sungguhan** — ini hanya gerbang sisi-browser untuk mencegah pengunjung random tidak sengaja
-membuka tab tersebut. Karena `index.html` adalah file statis tanpa server, password ini
-tersimpan sebagai teks biasa di dalam kode dan siapa pun yang membuka "View Page
-Source"/DevTools browser tetap bisa melihat isi tabelnya tanpa perlu memasukkan password.
-Jangan andalkan ini untuk melindungi data yang benar-benar sensitif — kalau butuh proteksi
-sungguhan, perlu autentikasi di sisi server (di luar cakupan dasbor statis ini).
+Tab "Daftar Fasda" mengharuskan login sebelum tabelnya terlihat:
+
+1. Pengunjung memilih **Jenis Bimtek/Implementasi** (Tata Kelola/Litnum/Digitalisasi — daftar
+   ini diambil otomatis dari isi tab "user", jadi tidak perlu diubah di kode kalau jenisnya
+   berubah) — atau memilih **Admin**.
+2. Kalau bukan Admin, muncul dropdown **Username** berisi nama-nama Fasda yang jenisnya cocok
+   dengan pilihan di langkah 1 (diambil dari tab "user").
+3. Masukkan **Password** sesuai baris akun tersebut di tab "user" (atau `FASDA_ADMIN_PASSWORD`
+   untuk Admin).
+
+Setelah login, seorang Fasda **hanya melihat baris jadwal Bimtek & Refleksi Implementasi yang
+nama Fasda-nya cocok dengan username mereka** (mencakup Tata Kelola/Litnum/Digitalisasi dan
+Bimtek/Refleksi Implementasi sekaligus — jenis yang dipilih saat login hanya dipakai untuk
+menyaring daftar nama di dropdown, bukan untuk membatasi data yang terlihat). Akun **Admin**
+(`FASDA_ADMIN_USERNAME`/`FASDA_ADMIN_PASSWORD` di `index.html`, bukan dari sheet) melihat semua
+Fasda tanpa dibatasi, sama seperti versi sebelumnya. Tombol **Keluar** di pojok kanan atas tabel
+mengakhiri sesi login (berguna kalau dasbor dibuka dari komputer bersama).
+
+## Catatan keamanan: login "Daftar Fasda"
+
+Login ini **bukan keamanan sungguhan** — ini hanya gerbang sisi-browser untuk mencegah
+pengunjung random tidak sengaja membuka atau menebak-nebak jadwal Fasda lain. Karena
+`index.html` adalah file statis tanpa server, seluruh data (termasuk jadwal semua Fasda dan
+seluruh baris tab "user" — username & password) sudah terkirim ke browser pengunjung begitu
+halaman dimuat; login cuma menyembunyikan tampilannya di layar. Siapa pun yang membuka "View
+Page Source"/DevTools/tab Network browser tetap bisa melihat seluruh data tanpa perlu
+memasukkan password apa pun. Jangan tulis password yang juga dipakai di akun lain (email,
+dsb.) di tab "user", dan jangan andalkan ini untuk melindungi data yang benar-benar sensitif —
+kalau butuh proteksi sungguhan (fasda benar-benar tidak bisa mengakses data fasda lain sama
+sekali, bukan cuma disembunyikan di UI), perlu autentikasi & filter data di sisi server (di luar
+cakupan dasbor statis ini).

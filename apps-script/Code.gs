@@ -14,6 +14,7 @@
 // untuk mengenali sheet sumber, supaya script tetap bekerja walau nama tab sheet diganti.
 var DATA_SHEET_HEADER_HINT = "Jenis BOSP";
 var GUGUS_SHEET_HEADER_HINT = "Nama Gugus Belajar";
+var USER_SHEET_HEADER_HINT = "Username";
 
 function doGet(e) {
   var payload;
@@ -48,10 +49,12 @@ function buildDashboardData_() {
   var found = findDataSheets_(ss);
   var dataSheet = found[DATA_SHEET_HEADER_HINT];
   var gugusSheet = found[GUGUS_SHEET_HEADER_HINT];
+  var userSheet = found[USER_SHEET_HEADER_HINT];
   if (!dataSheet) throw new Error('Tidak menemukan tab dengan kolom "' + DATA_SHEET_HEADER_HINT + '".');
 
   var dataRows = readRows_(dataSheet);
   var gugusRows = gugusSheet ? readRows_(gugusSheet) : [];
+  var userRows = userSheet ? readRows_(userSheet) : [];
 
   // Jadwal Bimtek/Refleksi Implementasi & Kewenangan per Gugus Belajar (dipakai sebagai lookup
   // metadata saja). Sumber kebenaran untuk JUMLAH sekolah & gugus adalah tab data mentah
@@ -143,7 +146,20 @@ function buildDashboardData_() {
     kabOut[kabKota].push(record);
   });
 
-  return { kab: kabOut, generatedAt: new Date().toISOString(), sheetUpdatedAt: sheetLastUpdatedCached_(ss) };
+  // Daftar username/password per Fasda (tab "user"), dipakai halaman "Daftar Fasda" untuk
+  // login per-Fasda (lihat README.md untuk catatan keamanannya — ini bukan autentikasi sisi
+  // server, hanya gerbang sisi-browser, sama seperti password Daftar Fasda sebelumnya).
+  var users = userRows
+    .map(function (r) {
+      return {
+        jenis: textVal_(r["Jenis Bimtek/Implementasi"]),
+        username: textVal_(r["Username"]),
+        password: textVal_(r["Password"]),
+      };
+    })
+    .filter(function (u) { return u.username && u.password; });
+
+  return { kab: kabOut, users: users, generatedAt: new Date().toISOString(), sheetUpdatedAt: sheetLastUpdatedCached_(ss) };
 }
 
 // Waktu terakhir Google Sheet sumber diubah (metadata file Drive) — dipakai dasbor untuk
@@ -201,10 +217,10 @@ function appendRtlSubmission_(body) {
 // pemanggilan Sheets API tanpa perlu. Berhenti lebih awal begitu keduanya ketemu.
 function findDataSheets_(ss) {
   var sheets = ss.getSheets();
-  var hints = [DATA_SHEET_HEADER_HINT, GUGUS_SHEET_HEADER_HINT];
+  var hints = [DATA_SHEET_HEADER_HINT, GUGUS_SHEET_HEADER_HINT, USER_SHEET_HEADER_HINT];
   var found = {};
   for (var i = 0; i < sheets.length; i++) {
-    if (found[DATA_SHEET_HEADER_HINT] && found[GUGUS_SHEET_HEADER_HINT]) break;
+    if (hints.every(function (h) { return found[h]; })) break;
     var sheet = sheets[i];
     var lastCol = sheet.getLastColumn();
     var scanRows = Math.min(5, sheet.getLastRow());

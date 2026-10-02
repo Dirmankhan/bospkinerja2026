@@ -30,11 +30,13 @@ const LinkIcon = mkIcon(["M9 17H7A5 5 0 0 1 7 7h2", "M15 7h2a5 5 0 1 1 0 10h-2",
 const X = mkIcon(["M18 6 6 18", "m6 6 12 12"]);
 
 
-// APPS_SCRIPT_URL dan FASDA_PAGE_PASSWORD SENGAJA TIDAK dideklarasikan di sini — keduanya
-// dideklarasikan langsung di index.html, di LUAR blok hasil compile dari file ini, supaya
-// nilai yang diisi orang lewat GitHub (URL Apps Script & password Daftar Fasda) tidak pernah
-// tertimpa saat build/compile.js dijalankan ulang. File ini cukup memakainya sebagai variabel
-// yang sudah tersedia di scope pemanggil. Lihat index.html & README.md untuk detailnya.
+// APPS_SCRIPT_URL, FASDA_ADMIN_USERNAME, dan FASDA_ADMIN_PASSWORD SENGAJA TIDAK dideklarasikan
+// di sini — ketiganya dideklarasikan langsung di index.html, di LUAR blok hasil compile dari
+// file ini, supaya nilai yang diisi orang lewat GitHub (URL Apps Script & akun Admin Daftar
+// Fasda) tidak pernah tertimpa saat build/compile.js dijalankan ulang. File ini cukup
+// memakainya sebagai variabel yang sudah tersedia di scope pemanggil. Password per-Fasda
+// (bukan Admin) datang dari tab "user" di Google Sheet lewat DATA.users. Lihat index.html &
+// README.md untuk detailnya.
 
 // DATA diisi secara live dari APPS_SCRIPT_URL saat aplikasi dimuat (lihat komponen App di bawah).
 // Nilai awal berupa kerangka kosong agar komponen tidak error sebelum data datang.
@@ -620,21 +622,61 @@ function Page2() {
 }
 
 /* ---------------- PAGE 3: DAFTAR FASDA ---------------- */
+// Pilihan "Jenis Bimtek/Implementasi" khusus untuk login sebagai Admin — bukan nilai yang
+// datang dari sheet, jadi diberi key yang tidak mungkin bertabrakan dengan isi kolom tersebut.
+const ADMIN_JENIS_KEY = "__ADMIN__";
+
 function Page4() {
-  const [unlocked, setUnlocked] = useState(() => {
-    try { return sessionStorage.getItem("fasdaUnlocked") === "1"; } catch (e) { return false; }
+  // DATA.users diisi backend dari tab "user" (kolom Jenis Bimtek/Implementasi, Username,
+  // Password) — lihat Code.gs & README.md. FASDA_ADMIN_USERNAME/PASSWORD dideklarasikan di
+  // index.html (lihat catatan di atas file ini), bukan dari sheet.
+  const users = DATA.users || [];
+  const jenisOptions = useMemo(() => Array.from(new Set(users.map(u => u.jenis).filter(Boolean))), [users]);
+
+  const [loginInfo, setLoginInfo] = useState(() => {
+    try {
+      const raw = sessionStorage.getItem("fasdaLogin");
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
   });
+  const [selJenis, setSelJenis] = useState("");
+  const [selUsername, setSelUsername] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const tryUnlock = () => {
-    if (passwordInput === FASDA_PAGE_PASSWORD) {
-      try { sessionStorage.setItem("fasdaUnlocked", "1"); } catch (e) { /* private browsing dsb. */ }
-      setUnlocked(true);
-      setPasswordError("");
+  const usernameOptions = useMemo(() => {
+    if (!selJenis || selJenis === ADMIN_JENIS_KEY) return [];
+    return users.filter(u => u.jenis === selJenis).map(u => u.username);
+  }, [users, selJenis]);
+
+  const persistLogin = (info) => {
+    try { sessionStorage.setItem("fasdaLogin", JSON.stringify(info)); } catch (e) { /* private browsing dsb. */ }
+    setLoginInfo(info);
+    setPasswordError("");
+    setPasswordInput("");
+  };
+
+  const tryLogin = () => {
+    if (selJenis === ADMIN_JENIS_KEY) {
+      if (passwordInput === FASDA_ADMIN_PASSWORD) {
+        persistLogin({ username: FASDA_ADMIN_USERNAME, isAdmin: true });
+      } else {
+        setPasswordError("Password salah. Coba lagi.");
+      }
+      return;
+    }
+    const match = users.find(u => u.jenis === selJenis && u.username === selUsername);
+    if (match && passwordInput !== "" && passwordInput === String(match.password)) {
+      persistLogin({ username: selUsername, jenis: selJenis, isAdmin: false });
     } else {
       setPasswordError("Password salah. Coba lagi.");
     }
+  };
+
+  const logout = () => {
+    try { sessionStorage.removeItem("fasdaLogin"); } catch (e) { /* abaikan */ }
+    setLoginInfo(null);
+    setSelJenis(""); setSelUsername(""); setPasswordInput(""); setPasswordError("");
   };
 
   const kabList = Object.keys(DATA.kab).sort();
@@ -663,17 +705,28 @@ function Page4() {
     return out;
   }, [kabList]);
 
+  // Fasda (non-admin) hanya melihat baris yang nama fasda-nya sama dengan username yang
+  // dipakai untuk login — mencakup seluruh Bimtek & Refleksi Implementasi atas nama mereka,
+  // bukan hanya jenis yang dipilih saat login (jenis di layar login hanya dipakai untuk
+  // menyaring daftar username, bukan untuk membatasi data yang terlihat setelah masuk). Admin
+  // (dari FASDA_ADMIN_USERNAME, bukan tab sheet) melihat semuanya, sama seperti sebelumnya.
+  const scopedRows = useMemo(() => {
+    if (!loginInfo) return [];
+    if (loginInfo.isAdmin) return rows;
+    return rows.filter(r => (r.fasda || "") === loginInfo.username);
+  }, [rows, loginInfo]);
+
   const gelombangOptions = useMemo(() => {
-    const set = new Set(rows.map(r=>r.gel).filter(Boolean));
+    const set = new Set(scopedRows.map(r=>r.gel).filter(Boolean));
     return Array.from(set).sort((a,b) => {
       const na = parseInt((a.match(/\d+/)||[0])[0], 10);
       const nb = parseInt((b.match(/\d+/)||[0])[0], 10);
       return na - nb;
     });
-  }, [rows]);
+  }, [scopedRows]);
 
   const tanggalOptions = useMemo(() => {
-    const set = new Set(rows.map(r=>r.tgl).filter(Boolean));
+    const set = new Set(scopedRows.map(r=>r.tgl).filter(Boolean));
     const parse = (s) => {
       const m = s.match(/^(\d+)\s+(\w+)/);
       return m ? { day: parseInt(m[1], 10), month: INDO_MONTHS.indexOf(m[2]) } : { day: 0, month: -1 };
@@ -682,12 +735,12 @@ function Page4() {
       const pa = parse(a), pb = parse(b);
       return pa.month - pb.month || pa.day - pb.day;
     });
-  }, [rows]);
+  }, [scopedRows]);
 
-  const labelOptions = useMemo(() => Array.from(new Set(rows.map(r=>r.label))), [rows]);
+  const labelOptions = useMemo(() => Array.from(new Set(scopedRows.map(r=>r.label))), [scopedRows]);
 
   const filteredRows = useMemo(() => {
-    let list = rows;
+    let list = scopedRows;
     if (activeLabels.length > 0) list = list.filter(r => activeLabels.includes(r.label));
     if (activeGelombangs.length > 0) list = list.filter(r => activeGelombangs.includes(r.gel));
     if (activeTanggals.length > 0) list = list.filter(r => activeTanggals.includes(r.tgl));
@@ -696,7 +749,7 @@ function Page4() {
       list = list.filter(r => (r.fasda || "").toLowerCase().includes(q));
     }
     return list;
-  }, [rows, query, activeLabels, activeGelombangs, activeTanggals]);
+  }, [scopedRows, query, activeLabels, activeGelombangs, activeTanggals]);
 
   const exportExcel = async () => {
     setExporting(true);
@@ -716,17 +769,48 @@ function Page4() {
     }
   };
 
-  if (!unlocked) {
+  if (!loginInfo) {
+    const canSubmit = passwordInput !== "" && (selJenis === ADMIN_JENIS_KEY || selUsername !== "");
     return (
-      <div style={{maxWidth:340, margin:"70px auto", textAlign:"center"}}>
+      <div style={{maxWidth:380, margin:"60px auto", textAlign:"center"}}>
         <div style={{fontFamily:"'Fraunces', serif", fontSize:20, fontWeight:600, color: INK, marginBottom:8}}>Halaman Terkunci</div>
-        <p style={{color:"#6b6154", fontSize:13, marginBottom:18, lineHeight:1.6}}>Masukkan password untuk melihat Daftar Fasda.</p>
-        <input type="password" value={passwordInput} autoFocus
-          autoCapitalize="off" autoCorrect="off" spellCheck="false"
-          onChange={e=>{ setPasswordInput(e.target.value); setPasswordError(""); }}
-          onKeyDown={e=>{ if (e.key === "Enter") tryUnlock(); }}
-          placeholder="Password" style={{...inputStyle, textAlign:"center", marginBottom:10}} />
-        <button onClick={tryUnlock} style={{...btnPrimary, width:"100%"}}>Buka Halaman</button>
+        <p style={{color:"#6b6154", fontSize:13, marginBottom:20, lineHeight:1.6}}>Masuk sebagai Fasda untuk melihat jadwal Bimtek & Refleksi Implementasi yang menjadi penugasan Anda.</p>
+
+        <div style={{textAlign:"left", marginBottom:12}}>
+          <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Jenis Bimtek/Implementasi</div>
+          <select value={selJenis}
+            onChange={e=>{ setSelJenis(e.target.value); setSelUsername(""); setPasswordInput(""); setPasswordError(""); }}
+            style={selectStyle}>
+            <option value="">Pilih jenis Bimtek/Implementasi...</option>
+            {jenisOptions.map(j => <option key={j} value={j}>{j}</option>)}
+            <option value={ADMIN_JENIS_KEY}>Admin</option>
+          </select>
+        </div>
+
+        {selJenis && selJenis !== ADMIN_JENIS_KEY && (
+          <div style={{textAlign:"left", marginBottom:12}}>
+            <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Username (Nama Fasda)</div>
+            <select value={selUsername}
+              onChange={e=>{ setSelUsername(e.target.value); setPasswordInput(""); setPasswordError(""); }}
+              style={selectStyle}>
+              <option value="">Pilih nama Anda...</option>
+              {usernameOptions.map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+          </div>
+        )}
+
+        {(selJenis === ADMIN_JENIS_KEY || selUsername) && (
+          <div style={{textAlign:"left", marginBottom:16}}>
+            <div style={{fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"#8a7f6e", marginBottom:6}}>Password</div>
+            <input type="password" value={passwordInput} autoFocus
+              autoCapitalize="off" autoCorrect="off" spellCheck="false"
+              onChange={e=>{ setPasswordInput(e.target.value); setPasswordError(""); }}
+              onKeyDown={e=>{ if (e.key === "Enter" && canSubmit) tryLogin(); }}
+              placeholder="Password" style={inputStyle} />
+          </div>
+        )}
+
+        <button onClick={tryLogin} disabled={!canSubmit} style={{...btnPrimary, width:"100%", opacity: canSubmit ? 1 : 0.5, cursor: canSubmit ? "pointer" : "default"}}>Masuk</button>
         {passwordError && <div style={{color: RUST, fontSize:12, marginTop:10}}>{passwordError}</div>}
       </div>
     );
@@ -734,7 +818,19 @@ function Page4() {
 
   return (
     <div>
-      <SectionLabel eyebrow={"Direktori Fasda · " + rows.filter(r=>r.fasda).length + " Penugasan"} title="Fasda per Kegiatan Bimtek & Refleksi Implementasi" sub="Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya." />
+      <div style={{display:"flex", justifyContent:"flex-end", marginBottom:6}}>
+        <div style={{display:"flex", alignItems:"center", gap:10, fontSize:12, color:"#6b6154"}}>
+          <span>Masuk sebagai <b style={{color:INK}}>{loginInfo.isAdmin ? "Admin" : loginInfo.username}</b></span>
+          <button onClick={logout} style={{...btnGhost, padding:"5px 10px", fontSize:11.5}}>Keluar</button>
+        </div>
+      </div>
+
+      <SectionLabel
+        eyebrow={(loginInfo.isAdmin ? "Direktori Fasda · " : "Jadwal Saya · ") + scopedRows.filter(r=>r.fasda).length + " Penugasan"}
+        title={loginInfo.isAdmin ? "Fasda per Kegiatan Bimtek & Refleksi Implementasi" : "Jadwal Bimtek & Refleksi Implementasi Saya"}
+        sub={loginInfo.isAdmin
+          ? "Cari fasilitator daerah (Fasda) berdasarkan nama untuk melihat kegiatan, penyelenggara, jadwal, gugus belajar, dan kabupaten/kota penugasannya."
+          : "Daftar kegiatan Bimtek dan Refleksi Implementasi yang menjadi penugasan Anda sebagai Fasda."} />
 
       <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(160px, 1fr))", gap:14, marginBottom:20, maxWidth:1180}}>
         <div>
