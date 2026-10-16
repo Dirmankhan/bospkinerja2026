@@ -693,12 +693,12 @@ function Page4() {
     kabList.forEach(k => (DATA.kab[k]||[]).forEach(g => {
       const tl = g.tl || {};
       const items = [
-        { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust", gel: tl.gel },
-        { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal", gel: tl.gel },
-        { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold", gel: tl.gel },
-        { label: "Refleksi Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust", gel: tl.gel_impl },
-        { label: "Refleksi Implementasi Litnum", peny: tl.impl_lit_peny, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal", gel: tl.gel_impl },
-        { label: "Refleksi Implementasi Digitalisasi", peny: tl.impl_dig_peny, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold", gel: tl.gel_impl },
+        { label: "Bimtek Tata Kelola", peny: tl.bimtek_spmi_peny, tempat: tl.bimtek_spmi_tempat, tgl: tl.bimtek_spmi_tgl, fasda: tl.bimtek_spmi_fasda, tone:"rust", gel: tl.gel },
+        { label: "Bimtek Litnum", peny: tl.bimtek_lit_peny, tempat: tl.bimtek_lit_tempat, tgl: tl.bimtek_lit_tgl, fasda: tl.bimtek_lit_fasda, tone:"teal", gel: tl.gel },
+        { label: "Bimtek Digitalisasi", peny: tl.bimtek_dig_peny, tempat: tl.bimtek_dig_tempat, tgl: tl.bimtek_dig_tgl, fasda: tl.bimtek_dig_fasda, tone:"gold", gel: tl.gel },
+        { label: "Refleksi Implementasi Tata Kelola", peny: tl.impl_spmi_peny, tempat: tl.impl_spmi_tempat, tgl: tl.impl_spmi_tgl, fasda: tl.impl_spmi_fasda, tone:"rust", gel: tl.gel_impl },
+        { label: "Refleksi Implementasi Litnum", peny: tl.impl_lit_peny, tempat: tl.impl_lit_tempat, tgl: tl.impl_lit_tgl, fasda: tl.impl_lit_fasda, tone:"teal", gel: tl.gel_impl },
+        { label: "Refleksi Implementasi Digitalisasi", peny: tl.impl_dig_peny, tempat: tl.impl_dig_tempat, tgl: tl.impl_dig_tgl, fasda: tl.impl_dig_fasda, tone:"gold", gel: tl.gel_impl },
       ];
       items.forEach(it => out.push({ kab: k, gugus: g.g, ...it }));
     }));
@@ -755,10 +755,10 @@ function Page4() {
     setExporting(true);
     try {
       const XLSX = await ensureXLSX();
-      const headers = ["Nama Fasda","Nama Bimtek","Gelombang","Penyelenggara","Tanggal Pelaksanaan","Nama Gugus","Kabupaten/Kota"];
-      const dataRows = filteredRows.map(r => [r.fasda||"", r.label, r.gel||"", r.peny||"", r.tgl||"", r.gugus, r.kab.replace("Kabupaten ","Kab. ")]);
+      const headers = ["Nama Fasda","Nama Bimtek","Gelombang","Penyelenggara","Tempat Kegiatan","Tanggal Pelaksanaan","Nama Gugus","Kabupaten/Kota"];
+      const dataRows = filteredRows.map(r => [r.fasda||"", r.label, r.gel||"", r.peny||"", r.tempat||"", r.tgl||"", r.gugus, r.kab.replace("Kabupaten ","Kab. ")]);
       const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
-      ws["!cols"] = [ {wch:32},{wch:26},{wch:14},{wch:26},{wch:18},{wch:26},{wch:20} ];
+      ws["!cols"] = [ {wch:32},{wch:26},{wch:14},{wch:26},{wch:26},{wch:18},{wch:26},{wch:20} ];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Daftar Fasda");
       XLSX.writeFile(wb, "daftar_fasda_bosp_" + new Date().toISOString().slice(0,10) + ".xlsx");
@@ -865,12 +865,13 @@ function Page4() {
 
       <div style={{background:"#fff", border:"1px solid " + LINE, borderRadius: 10, overflow:"hidden"}}>
         <div style={{maxHeight: 560, overflow:"auto"}}>
-          <table style={{width:"100%", minWidth:760, borderCollapse:"collapse", fontSize: 13}}>
+          <table style={{width:"100%", minWidth:860, borderCollapse:"collapse", fontSize: 13}}>
             <thead>
               <tr style={{position:"sticky", top:0, background: PAPER2, zIndex:1}}>
                 <th style={th}>Nama Fasda</th>
                 <th style={th}>Nama Bimtek</th>
                 <th style={th}>Penyelenggara</th>
+                <th style={th}>Tempat Kegiatan</th>
                 <th style={th}>Tanggal Pelaksanaan</th>
                 <th style={th}>Nama Gugus</th>
                 <th style={th}>Kabupaten/Kota</th>
@@ -882,12 +883,13 @@ function Page4() {
                   <td style={{...td, fontWeight:600}}>{naVal(r.fasda)}</td>
                   <td style={td}><Chip tone={r.tone}>{r.label}</Chip></td>
                   <td style={td}>{naVal(r.peny)}</td>
+                  <td style={td}>{naVal(r.tempat)}</td>
                   <td style={td}>{naVal(r.tgl)}</td>
                   <td style={td}>{r.gugus}</td>
                   <td style={td}>{r.kab.replace("Kabupaten ","Kab. ")}</td>
                 </tr>
               ))}
-              {filteredRows.length===0 && <tr><td colSpan={6} style={{padding:24, textAlign:"center", color:"#a89e8c"}}>Tidak ada fasda yang cocok dengan pencarian.</td></tr>}
+              {filteredRows.length===0 && <tr><td colSpan={7} style={{padding:24, textAlign:"center", color:"#a89e8c"}}>Tidak ada fasda yang cocok dengan pencarian.</td></tr>}
             </tbody>
           </table>
         </div>
